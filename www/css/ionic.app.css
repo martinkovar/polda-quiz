@@ -9715,6 +9715,7 @@ a.button {
   -webkit-transition-duration: 0s;
   transition-duration: 0s; }
 
+/* @Martin - tady pis svuj kod */
 .slider {
   height: 100%;
   text-align: center; }

@@ -202,31 +202,29 @@ angular.module('polda-quiz.services', [])
 
 	return {
 		initDB: function() {
-			_localDB = new PouchDB('quiz_database12', {
+			//vytvoreni lokalni databaze na klientovi
+			_localDB = new PouchDB('quiz_database13', {
 				adapter: 'websql'
 			});
-
+			//vraceni vsech dokumentu lokalni databaze
 			$q.when(_localDB.allDocs({
 				include_docs: true
 			}))
 			.then(function(docs) {
-				console.log("naplneni cache otazkami z lokalni db");
+				//naplneni cache (promenne _questions) otazkami z lokalni db
 				_questions = docs.rows.map(function(row) {
 					return row.doc;
 				});
-			}).then(function(){
-				//naplneni lokalni db default hodnotami v priprade prazdne lokalni db
+			})
+			.then(function(){
+				//v priprade prazdne lokalni db
 				if (_questions.length === 0) {
-					console.log("defaultni naplneni otazkami v pripade prazdne lokalni db");
-					// TOTO SE MUSÍ SYNCHRONIZOVAT!!!!!
+					//naplneni lokalni db default hodnotami (ktere jsou napevno v kodu)
 					$q.when(_localDB.bulkDocs(defaultQuestions));
 					_questions = defaultQuestions;
 				}
-				console.log("doslo k finalni inicializaci");
-				console.log(_questions);
 
 				var _remoteDB = new PouchDB("http://localhost:5984/quiz_database");
-
 				_localDB.sync(_remoteDB, {
 					// v produkci live a retry vypnout? asi jo
 					//live: true,
@@ -234,6 +232,15 @@ angular.module('polda-quiz.services', [])
 				})
 				.on('change', function(info) {
 					// handle change
+					$q.when(_localDB.allDocs({
+						include_docs: true
+					}))
+					.then(function(docs) {
+						//naplneni cache (promenne _questions) otazkami z lokalni db
+						_questions = docs.rows.map(function(row) {
+							return row.doc;
+						});
+					});
 				}).on('paused', function() {
 					// replication paused (e.g. user went offline)
 				}).on('active', function() {
@@ -263,57 +270,9 @@ angular.module('polda-quiz.services', [])
 			}
 			return null;
 		},
-		getAllQuestions: function() {
-			if (!_questions) {
-				return $q.when(_localDB.allDocs({
-						include_docs: true
-					}))
-					.then(function(docs) {
-						_questions = docs.rows.map(function(row) {
-							return row.doc;
-						});
-
-						// Listen for changes on the database.
-						_localDB.changes({
-								live: true,
-								since: 'now',
-								include_docs: true
-							})
-							.on('change', onDatabaseChange);
-
-						return _questions;
-					});
-
-			} else {
-				// Vrátit nacachovaná (lokálně uložená) data
-				return $q.when(_questions);
-			}
-		},
 		getQuestions: function(level) {
-			if (!_questions) {
-				return $q.when(_localDB.allDocs({
-						include_docs: true
-					}))
-					.then(function(docs) {
-						_questions = docs.rows.map(function(row) {
-							return row.doc;
-						});
-
-						// Listen for changes on the database.
-						_localDB.changes({
-								live: true,
-								since: 'now',
-								include_docs: true
-							})
-							.on('change', onDatabaseChange);
-
-						return _questions;
-					});
-
-			} else {
-				// Vrátit nacachovaná (lokálně uložená) data
-				return $q.when(_questions);
-			}
+			// Vrátit nacachovaná (lokálně uložená) data
+			return $q.when(_questions);
 		},
 		getRandomQuestion: function(gameSetup) {
 			console.log('start random question');
@@ -348,8 +307,11 @@ angular.module('polda-quiz.services', [])
 }])
 
 .factory('ProfileService', ['$q', function($q) {
-	//TODO
-	var _profiles = [{
+	var _localDB;
+	var _profiles; //lokalni cache pro otazky
+
+//starsi
+	var _profile = [{
 		id: 0,
 		name: 'Martin',
 		level: 1,
@@ -365,6 +327,35 @@ angular.module('polda-quiz.services', [])
 		},
 	}];
 
+	function onDatabaseChange(change) {
+		var index = findIndex(_questions, change.id);
+		var question = _questions[index];
+
+		if (change.deleted) {
+			if (question) {
+				_questions.splice(index, 1); // delete
+			}
+		} else {
+			if (question && question._id === change.id) {
+				_questions[index] = change.doc; // update
+			} else {
+				_questions.splice(index, 0, change.doc); // insert
+			}
+		}
+	}
+
+	// Binarni hledani, pole je defaultne razeno podle _id.
+	function findIndex(array, id) {
+		var low = 0,
+			high = array.length,
+			mid;
+		while (low < high) {
+			mid = (low + high) >>> 1;
+			array[mid]._id < id ? low = mid + 1 : high = mid;
+		}
+		return low;
+	}
+
 	return {
 		all: function() {
 			return _profiles;
@@ -376,6 +367,88 @@ angular.module('polda-quiz.services', [])
 			_statistics.total.successQuestions += success;
 			_statistics.total.failedQuestions += failure;
 			_statistics.answeredQuestions += success + failure;
+		},
+		initDB: function() {
+			_localDB = new PouchDB('profile_database1', {
+				adapter: 'websql'
+			});
+
+			$q.when(_localDB.allDocs({
+				include_docs: true
+			}))
+			/*
+			.then(function(docs) {
+				//console.log("naplneni cache otazkami z lokalni db");
+				_questions = docs.rows.map(function(row) {
+					return row.doc;
+				});
+			})*/
+			.then(function(){
+				//naplneni lokalni db default hodnotami v priprade prazdne lokalni db
+				if (_questions.length === 0) {
+					//console.log("defaultni naplneni otazkami v pripade prazdne lokalni db");
+					// TOTO SE MUSÍ SYNCHRONIZOVAT!!!!!
+					$q.when(_localDB.bulkDocs(defaultQuestions));
+					_profiles = defaultQuestions;
+				}
+
+				var _remoteDB = new PouchDB("http://localhost:5984/profile_database");
+				_localDB.sync(_remoteDB, {
+					// v produkci live a retry vypnout? asi jo
+					//live: true,
+					//retry: true
+				})
+				.on('change', function(info) {
+					// handle change
+				}).on('paused', function() {
+					// replication paused (e.g. user went offline)
+				}).on('active', function() {
+					// replicate resumed (e.g. user went back online)
+				}).on('denied', function(info) {
+					// a document failed to replicate, e.g. due to permissions
+				}).on('complete', function(info) {
+					// handle complete
+					console.log('db synchronizace');
+				}).on('error', function(err) {
+					// handle error
+					var alertPopup = $ionicPopup.alert({
+						title: 'Chyba synchronizace!',
+						template: 'Nelze přistoupit k serverovým datům'
+					});
+					alertPopup.then(function(res) {
+						$log.log('chyba při synchronizaci');
+					});
+				});
+			});
+		},
+        addProfile: function() {},
+        updateProfile: function() {},
+        deleteProfile: function() {},
+		getProfile: function(level) {
+			if (!_profiles) {
+				return $q.when(_localDB.allDocs({
+						include_docs: true
+					}))
+					.then(function(docs) {
+						_profiles = docs.rows.map(function(row) {
+							return row.doc;
+						});
+
+						// Listen for changes on the database.
+						_localDB.changes({
+							live: true,
+							since: 'now',
+							include_docs: true
+						})
+						.on('change', onDatabaseChange);
+
+						return _profiles;
+					});
+
+			} else {
+				// Vrátit nacachovaná (lokálně uložená) data
+				return $q.when(_profiles);
+			}
 		}
 	};
 

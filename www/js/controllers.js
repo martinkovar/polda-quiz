@@ -11,15 +11,13 @@ angular.module('polda-quiz.controllers', ['timer'])
 
 .controller('GameplayCtrl', ['$scope', '$location', '$ionicNavBarDelegate', '$log', '$ionicPlatform', 'ContentService', 'GameplayService', 'ProfileService', '$ionicModal', '$ionicHistory', '$ionicPopup', '$state', function($scope, $location, $ionicNavBarDelegate, $log, $ionicPlatform, ContentService, GameplayService, ProfileService, $ionicModal, $ionicHistory, $ionicPopup, $state) {
 	$scope.$log = $log;
-	$scope.topics = ContentService.getTopics();
-	$scope.difficulties = ContentService.getDifficulties();
 	$scope.game = GameplayService.all();
 	$scope.selectedOption = 0;
 
 	$ionicPlatform.ready(function() {
-		/*ContentService.getQuestions().then(function(questions) {
+		ContentService.getQuestions(0).then(function(questions) {
 			$scope.questions = questions;
-		});*/
+		});
 	});
 
 	$scope.startGame = function() {
