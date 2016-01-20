@@ -15,14 +15,15 @@ angular.module('polda-quiz.controllers', ['timer'])
 	$scope.selectedOption = 0;
 
 	$ionicPlatform.ready(function() {
-		ContentService.getQuestions(0).then(function(questions) {
+		ContentService.getQuestions().then(function(questions) {
 			$scope.questions = questions;
 		});
 	});
 
 	$scope.startGame = function() {
 		$scope.selectedOption = 0;
-		var response = GameplayService.setQuizQuestion();
+		GameplayService.setGameQuestions();
+		var response = GameplayService.setActiveQuestion();
 		if (response === null) {
 			var alertPopup = $ionicPopup.alert({
 				title: 'Nejsou otázky!',
@@ -39,7 +40,7 @@ angular.module('polda-quiz.controllers', ['timer'])
 	$scope.nextQuestion = function() {
 		if ($scope.game.gameStatistics.answeredQuestions < 10) {
 			$scope.selectedOption = 0;
-			GameplayService.setQuizQuestion();
+			GameplayService.setActiveQuestion();
 			$scope.$broadcast('timer-set-countdown', 10);
 			$scope.$broadcast('timer-start');
 		} else {
