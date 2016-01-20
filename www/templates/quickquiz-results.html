@@ -1,0 +1,20 @@
+<ion-view view-title="Rychlovka Výsledky">
+	<ion-nav-buttons side="right">
+		<button class="button button-icon icon ion-close-round" ng-click="exitGame()">
+			Ukončit hru
+		</button>
+	</ion-nav-buttons>
+	<ion-content>
+<h2>Výsledky jsou následující</h2>
+<ul>
+	<li>Obtížnost: {{game.selectedDifficulty}}</li>
+	<li>Téma: {{game.selectedTopic}}</li>
+	<li>Správně odpovězeno: {{game.gameStatistics.successQuestions}}</li>
+	<li>Špatně odpovězeno: {{game.gameStatistics.failedQuestions}}</li>
+	<li>Celkem odpovězeno: {{game.gameStatistics.answeredQuestions}}</li>
+	<li>Úspěšnost: {{(100*game.gameStatistics.successQuestions/game.gameStatistics.answeredQuestions)| number:0}}%</li>
+</ul>
+
+		<a class="button" ui-sref="quick-quiz.difficulty">Zahájit novou hru</a>
+	</ion-content>
+</ion-view>

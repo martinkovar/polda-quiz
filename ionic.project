@@ -1,0 +1,13 @@
+{
+  "name": "polda-kviz",
+  "app_id": "",
+  "gulpStartupTasks": [
+    "index",
+    "sass",
+    "watch"
+  ],
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*"
+  ]
+}

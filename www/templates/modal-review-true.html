@@ -1,0 +1,17 @@
+<ion-modal-view>
+<ion-header-bar>
+<h1 class="title">Správně</h1>
+</ion-header-bar>
+<ion-content>
+	<h2 class="title">{{game.currentQuestion.question}}</h2>
+	<span ng-if="game.currentQuestion.options[].isAnswer">Správná odpověď je {{game.currentQuestion.options[game.currentQuestion.answer].text}}</span>
+<p>
+	Obtížnost: {{game.selectedDifficulty}}<br>
+	Téma: {{game.selectedTopic}}<br>
+	Správně odpovězeno: {{game.successQuestions}}<br>
+	Špatně odpovězeno: {{game.failedQuestions}}<br>
+	Celkem odpovězeno: {{game.answeredQuestions}}
+</p>
+<a class="button" ng-click="nextQuestion()">Další otázka</a>
+</ion-content>
+</ion-modal-view>

@@ -1,0 +1,69 @@
+@import "variables";
+.slider { height: 100%; text-align: center }
+.scroll { height: 100% }
+
+html, body {
+  font-family: "Ubuntu";
+}
+.my-back-button {
+content: url('http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons/black-ink-grunge-stamps-textures-icons-arrows/003683-black-ink-grunge-stamp-textures-icon-arrows-double-arrowhead-left.png');
+width: 35px;
+}
+.content-balanced {
+  background-color: $balanced
+}
+.bar-light {
+	border-bottom: 0;
+	background-color: transparent;
+}
+.question {
+	font-weight: bold;
+	font-size: 1.5em;
+	text-align: center;
+	margin: 15px 5px;
+	padding: 10px;
+}
+.options {
+	counter-reset: poradi-counter;
+
+	.option span:before {
+   	content: counter(poradi-counter, upper-latin);
+   	counter-increment: poradi-counter;
+   	border-radius: $radius;
+	padding: 3px 6px;
+   	display: inline-block;
+   	background-color: lighten( $dark, 10% );
+   	color: $light;
+	position: absolute;
+	top: 15px;
+	left:20px;
+	line-height: 1;
+
+   }
+   .option {
+	   margin: 5px 0px;
+   }
+}
+
+.button {
+	border-radius: 30px;
+	.option {
+		color: $assertive;
+		position: relative;
+	}
+}
+.button.disabled, .button[disabled] {
+  opacity: 1;
+}
+.button-stable {
+	color: $dark;
+}
+.panel-card {
+	border-radius: 30px;
+	margin: 10px 10px;
+	padding: 10px 10px;
+	background: $light;
+	-webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.05);
+-moz-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.05);
+box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.05);
+}

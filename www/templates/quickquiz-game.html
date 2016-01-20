@@ -1,0 +1,29 @@
+<ion-view view-title="Rychlokvíz hra">
+	<ion-nav-buttons side="right">
+		<button class="button button-icon icon ion-android-cancel" ng-click="exitGame()">
+		</button>
+	</ion-nav-buttons>
+	<ion-content>
+		<ul>
+			<li>Celkem: {{game.gameStatistics.answeredQuestions}} Správně: {{game.gameStatistics.successQuestions}} Špatně: {{game.gameStatistics.failedQuestions}}
+			</li>
+			<li>Úspěšnost: {{(100*game.gameStatistics.successQuestions/game.gameStatistics.answeredQuestions)| number:0}}%</li>
+		</ul>
+		<strong>Zbývající čas:
+			<timer countdown="10" finish-callback="timeLimit()" interval="1000">{{countdown}}</timer>
+		</strong>
+
+		<div class="panel-card">
+			<p class="question">{{ game.activeQuestion.question }}</p>
+
+			<div class="responsive-sm options">
+				<button class="col button option" ng-class="{'button-balanced':option.isAnswer && game.isActiveQuestionsAnswered,  'button-assertive':!option.isAnswer && ($index + 1 == selectedOption) && game.isActiveQuestionsAnswered}" ng-click="answer($index, option.isAnswer)"
+				ng-disabled="game.isActiveQuestionsAnswered" ng-repeat="option in game.activeQuestion.options">
+					<span>{{ option.text }}</span>
+				</button>
+			</div>
+
+			<a class="button" ng-click="nextQuestion()" ng-disabled="!game.isActiveQuestionsAnswered">{{ game.gameStatistics.answeredQuestions < 10 ? "Další otázka" : "Zobrazit výsledky" }}</a>
+		</div>
+	</ion-content>
+</ion-view>
