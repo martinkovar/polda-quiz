@@ -44,7 +44,7 @@ angular.module('polda-quiz.controllers', ['timer'])
 			$scope.$broadcast('timer-set-countdown', 10);
 			$scope.$broadcast('timer-start');
 		} else {
-			$state.go('quick-quiz.results');
+			$state.go('quick-quiz.pregame');
 		}
 	};
 

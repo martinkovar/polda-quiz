@@ -1,8 +1,27 @@
-<ion-view view-title="Menu">
-    <ion-content class="padding" scroll="false">
-        <a class="button button-block button-outline button-stable" ui-sref="quick-quiz.pregame">Pokračovat</a>
-        <a class="button button-block button-stable">Nová hra</a>
-        <a class="button button-block button-stable">Profil a statistiky</a>
-        <a class="button button-block button-outline button-stable" ui-sref="about">O hře</a>
+<ion-view hide-nav-bar="true" view-title="Menu">
+  <ion-content class="padding" scroll="false">
+    <div class="cont1 body_color_dark" style="color: white; text-align:center; padding-top:0.8em;">REKLAMA!</div>
+
+    <div class="cont2">
+      <div class="title">Polda</div>
+      <img src="img/polda_nick.png" class="image_home">
+    </div>
+
+    <div class="cont3">
+
+      <a class="item_cont_large button button-block  button-outline button-stable " ui-sref="quick-quiz.pregame">Pokračovat</a>
+      <a class="button button-block button-stable item_cont_large">Nová hra</a>
+      <a class="button button-block button-stable item_cont_large">Profil a statistiky</a>
+      <a class="button button-block button-outline button-stable item_cont_large" ui-sref="about">O hře</a>
+    </div>
+
+    <div class="cont4">
+
+      <div class=" button button_cont_small bt_cont_left" ng-click="exitGame()">
+        Konec
+      </div>
+
+    </div>
+
     </ion-content>
-</ion-view>
+  </ion-view>

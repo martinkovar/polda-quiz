@@ -1,71 +1,287 @@
 @import "variables";
-
 /* @Martin - tady pis svuj kod */
-.slider { height: 100%; text-align: center }
-.scroll { height: 100% }
-
-html, body {
+.slider {
+  height: 100%;
+  text-align: center;
+}
+.scroll {
+  height: 100%;
+}
+html,
+body {
   font-family: "Ubuntu";
 }
 .my-back-button {
-content: url('http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons/black-ink-grunge-stamps-textures-icons-arrows/003683-black-ink-grunge-stamp-textures-icon-arrows-double-arrowhead-left.png');
-width: 35px;
+  content: url('http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons/black-ink-grunge-stamps-textures-icons-arrows/003683-black-ink-grunge-stamp-textures-icon-arrows-double-arrowhead-left.png');
+  width: 35px;
 }
 .content-balanced {
-  background-color: $balanced
+  background-color: $balanced;
 }
 .bar-light {
-	border-bottom: 0;
-	background-color: transparent;
+  border-bottom: 0;
+  background-color: transparent;
 }
 .question {
-	font-weight: bold;
-	font-size: 1.5em;
-	text-align: center;
-	margin: 15px 5px;
-	padding: 10px;
+  font-weight: bold;
+  font-size: 1.5em;
+  text-align: center;
+  margin: 15px 5px;
+  padding: 10px;
 }
 .options {
-	counter-reset: poradi-counter;
-
-	.option span:before {
-   	content: counter(poradi-counter, upper-latin);
-   	counter-increment: poradi-counter;
-   	border-radius: $radius;
-	padding: 3px 6px;
-   	display: inline-block;
-   	background-color: lighten( $dark, 10% );
-   	color: $light;
-	position: absolute;
-	top: 15px;
-	left:20px;
-	line-height: 1;
-
-   }
-   .option {
-	   margin: 5px 0px;
-   }
+  counter-reset: poradi-counter;
+  .option span:before {
+    content: counter(poradi-counter, upper-latin);
+    counter-increment: poradi-counter;
+    border-radius: $radius;
+    padding: 3px 6px;
+    display: inline-block;
+    background-color: lighten( $dark, 10% );
+    color: $light;
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    line-height: 1;
+  }
+  .option {
+    margin: 5px 0;
+  }
 }
-
 .button {
-	border-radius: 30px;
-	.option {
-		color: $assertive;
-		position: relative;
-	}
+  border-radius: 30px;
+  .option {
+    color: $assertive;
+    position: relative;
+  }
 }
-.button.disabled, .button[disabled] {
+.button.disabled,
+.button[disabled] {
   opacity: 1;
 }
 .button-stable {
-	color: $dark;
+  color: $color_text_light;
+  background: $color2;
 }
 .panel-card {
-	border-radius: 30px;
-	margin: 10px 10px;
-	padding: 10px 10px;
-	background: $light;
-	-webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.05);
--moz-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.05);
-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.05);
+  border-radius: 30px;
+  margin: 10px;
+  padding: 10px;
+  background: $light;
+  -webkit-box-shadow: 0 0 10px 0 rgba(0,0,0,0.05);
+  -moz-box-shadow: 0 0 10px 0 rgba(0,0,0,0.05);
+  box-shadow: 0 0 10px 0 rgba(0,0,0,0.05);
+}
+body {
+  font: 100% $font_stack;
+}
+.body_color_light {
+  background-color: $color_back_light;
+}
+.body_color_dark {
+  background-color: $color_back_dark;
+}
+.cont {
+  height: 100vh;
+  width: 100vw;
+}
+.cont1 {
+  height: 6%;
+  width: 100%;
+}
+.cont2 {
+  height: 50%;
+  width: 100%;
+}
+.cont3 {
+  height: 30%;
+  width: 100%;
+}
+.cont4 {
+  height: 14%;
+  width: 100%;
+}
+.pop {
+  height: 90vh;
+  width: 90vw;
+  border: 1px solid black;
+  margin-top: 5vh;
+  border-radius: 32px;
+}
+.pop-cont1 {
+  height: 60%;
+  width: 100%;
+}
+.pop-cont2 {
+  height: 30%;
+  width: 100%;
+}
+.pop-cont3 {
+  height: 10%;
+  width: 100%;
+}
+.pop-center {
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+}
+.title {
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  color: #223588;
+  padding-top: 1%;
+}
+.image_home {
+  height: 44%;
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+}
+.image_pop {
+  height: 50%;
+  position: absolute;
+  left: 2em;
+  margin-top: -1em;
+}
+.item_cont_large {
+  height: 2.5em;
+  width: 80%;
+  line-height: 2.5em;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 1em;
+  border-radius: 30px;
+  color: $color_text_light;
+  background: $color2;
+  opacity: $opacity_std;
+  box-shadow: $box_shadow;
+  margin: 0.5em auto auto;
+  display: block;
+  min-height: 38px;
+}
+/*.item_cont_large:hover {
+  opacity: $opacity_sel;
+  font-weight: bold;
+}*/
+.button_cont_small {
+  height: 4em;
+  width: 20%;
+  line-height: 4em;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 0.7em;
+  border-radius: 30px;
+  color: $color_text_light;
+  background: $color_back_dark;
+  opacity: $opacity_std;
+  box-shadow: $box_shadow;
+  //  padding-top: 1.3em;
+}
+/*.button_cont_small:hover {
+    opacity: $opacity_sel;
+    color: $color_text_light;
+    font-weight: bold;
+}*/
+.bt_cont_left {
+  position: absolute;
+  left: 5%;
+  bottom: 3%;
+}
+.bt_cont_right {
+  position: absolute;
+  right: 5%;
+  bottom: 3%;
+}
+.button_pop_small {
+  height: 4em;
+  width: 35%;
+  line-height: 4em;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 0.7em;
+  border-radius: 30px;
+  color: $color_text_light;
+  background: $color_back_dark;
+  opacity: $opacity_std;
+  box-shadow: $box_shadow;
+}
+/*.button_pop_small:hover {
+    opacity: $opacity_sel;
+    color: $color_text_light;
+    font-weight: bold;
+}*/
+.bt_pop_left {
+  position: absolute;
+  left: 3em;
+}
+.bt_pop_right {
+  position: absolute;
+  right: 3em;
+}
+.pop_text {
+  width: 50%;
+  margin-left: 50%;
+  font-size: 0.9em;
+}
+.box-padding1 {
+  padding-left: 3vw;
+  padding-right: 3vw;
+}
+.stats_text {
+  font-size: 1em;
+}
+.scroll-bar-indicator {
+  display: none;
+}
+.overflow-scroll {
+  overflow-y: hidden;
+}
+.element.style {
+  transform: none;
+}
+.scroll-content {
+  transform: none;
+}
+.questions_task {
+  padding-top: 1em;
+  text-align: center;
+  width: 80%;
+  height: 70%;
+  margin-left: 10%;
+}
+.questions_stats {
+  width: 50%;
+  height: 25%;
+  padding-left: 7%;
+  padding-top: 3%;
+}
+.questions_help {
+  width: 25%;
+  height: 100%;
+  display: inline-block;
+}
+.image_help {
+  width: 112%;
+  padding-top: 8%;
+  margin-left: 3%;
+}
+.image_help1 {
+  width: 60%;
+  padding-top: 8%;
+  margin-left: 0;
+}
+.responsive-sm {
+  width: 80%;
+  margin-left: 10%;
+}
+.col {
+  padding: 0;
+}
+.button-outline {
+  color: $color_text_light;
+  background: $color2;
 }
