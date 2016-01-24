@@ -48,6 +48,10 @@ angular.module('polda-quiz.controllers', ['timer'])
 		}
 	};
 
+	$scope.getHelp = function() {
+		//TODO
+	}
+
 	$scope.exitGame = function() {
 		var confirmPopup = $ionicPopup.confirm({
 			title: 'Opravdu ukončit hru?',
