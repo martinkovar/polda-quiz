@@ -73,7 +73,7 @@ angular.module('polda-quiz.services', [])
 					return _game.activeQuestion;
 				}
 			},
-			setactiveQuestionAnswered: function(state) {
+			setActiveQuestionAnswered: function(state) {
 				_game.isActiveQuestionsAnswered = state;
 			},
 			setScoreQuestion: function(result) {

@@ -69,7 +69,7 @@ angular.module('polda-quiz.controllers', ['timer'])
 		$scope.$broadcast('timer-clear');
 		$scope.timerRunning = false;
 		$scope.selectedOption = index + 1;
-		GameplayService.setactiveQuestionAnswered(true);
+		GameplayService.setActiveQuestionAnswered(true);
 		GameplayService.setScoreQuestion(isAnswer);
 
 		if (isAnswer) {
@@ -96,14 +96,15 @@ angular.module('polda-quiz.controllers', ['timer'])
 	};
 
 	$scope.timeLimit = function() {
-		GameplayService.setactiveQuestionAnswered(true);
+		GameplayService.setActiveQuestionAnswered(true);
 		GameplayService.setScoreQuestion(false);
 		$scope.$apply();
 		var alertPopup = $ionicPopup.alert({
-			title: 'Hmm, ani obraz ani zvuk',
-			template: 'Tak jako ale musíš odpovědět frajere...'
-		});
-		alertPopup.then(function(res) {
+     title: 'Nezodpovězeno!',
+     template: 'Ani obraz, ani zvuk...'
+   });
+
+	 alertPopup.then(function(res) {
 			if ($scope.game.gameStatistics.answeredQuestions < 10) {
 				$scope.selectedOption = 0;
 				GameplayService.setActiveQuestion();
