@@ -96,15 +96,12 @@ angular.module('polda-quiz.controllers', ['timer'])
 	};
 
 	$scope.timeLimit = function() {
-		GameplayService.setActiveQuestionAnswered(true);
-		GameplayService.setScoreQuestion(false);
-		$scope.$apply();
-		var alertPopup = $ionicPopup.alert({
-     title: 'Nezodpovězeno!',
-     template: 'Ani obraz, ani zvuk...'
-   });
+			var alertPopup = $ionicPopup.alert({
+				title: 'Nezodpovězeno!',
+				template: 'Sorry, kde nic není, ani smrt nehrabe...'
+			});
 
-	 alertPopup.then(function(res) {
+		alertPopup.then(function(res) {
 			if ($scope.game.gameStatistics.answeredQuestions < 10) {
 				$scope.selectedOption = 0;
 				GameplayService.setActiveQuestion();
@@ -114,6 +111,10 @@ angular.module('polda-quiz.controllers', ['timer'])
 				$state.go('quiz-game.pregame');
 			}
 		});
+		GameplayService.setActiveQuestionAnswered(true);
+		GameplayService.setScoreQuestion(false);
+		$scope.$apply();
+
 	};
 
 }]);
