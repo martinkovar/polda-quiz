@@ -9723,7 +9723,8 @@ a.button {
 .scroll {
   height: 100%; }
 
-html, body {
+html,
+body {
   font-family: "Ubuntu"; }
 
 .my-back-button {
@@ -9759,7 +9760,7 @@ html, body {
     left: 20px;
     line-height: 1; }
   .options .option {
-    margin: 5px 0px; }
+    margin: 5px 0; }
 
 .button {
   border-radius: 30px; }
@@ -9767,17 +9768,231 @@ html, body {
     color: #ef473a;
     position: relative; }
 
-.button.disabled, .button[disabled] {
+.button.disabled,
+.button[disabled] {
   opacity: 1; }
 
 .button-stable {
-  color: #444; }
+  color: #eee;
+  background: #3399ff; }
 
 .panel-card {
   border-radius: 30px;
-  margin: 10px 10px;
-  padding: 10px 10px;
+  margin: 10px;
+  padding: 10px;
   background: #fff;
-  -webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
-  -moz-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05); }
+  -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.05); }
+
+body {
+  font: 100% "PT Sans", sans-serif; }
+
+.body_color_light {
+  background-color: #eee; }
+
+.body_color_dark {
+  background-color: #333; }
+
+.cont {
+  height: 100vh;
+  width: 100vw; }
+
+.cont1 {
+  height: 6%;
+  width: 100%; }
+
+.cont2 {
+  height: 50%;
+  width: 100%; }
+
+.cont3 {
+  height: 30%;
+  width: 100%; }
+
+.cont4 {
+  height: 14%;
+  width: 100%; }
+
+.pop {
+  height: 90vh;
+  width: 90vw;
+  border: 1px solid black;
+  margin-top: 5vh;
+  border-radius: 32px; }
+
+.pop-cont1 {
+  height: 60%;
+  width: 100%; }
+
+.pop-cont2 {
+  height: 30%;
+  width: 100%; }
+
+.pop-cont3 {
+  height: 10%;
+  width: 100%; }
+
+.pop-center {
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0; }
+
+.title {
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  color: #223588;
+  padding-top: 1%; }
+
+.image_home {
+  height: 44%;
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0; }
+
+.image_pop {
+  height: 50%;
+  position: absolute;
+  left: 2em;
+  margin-top: -1em; }
+
+.item_cont_large {
+  height: 2.5em;
+  width: 80%;
+  line-height: 2.5em;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 1em;
+  border-radius: 30px;
+  color: #eee;
+  background: #3399ff;
+  opacity: 0.7;
+  box-shadow: 0px 0px 10px #666;
+  margin: 0.5em auto auto;
+  display: block;
+  min-height: 38px; }
+
+/*.item_cont_large:hover {
+  opacity: $opacity_sel;
+  font-weight: bold;
+}*/
+.button_cont_small {
+  height: 4em;
+  width: 20%;
+  line-height: 4em;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 0.7em;
+  border-radius: 30px;
+  color: #eee;
+  background: #333;
+  opacity: 0.7;
+  box-shadow: 0px 0px 10px #666; }
+
+/*.button_cont_small:hover {
+    opacity: $opacity_sel;
+    color: $color_text_light;
+    font-weight: bold;
+}*/
+.bt_cont_left {
+  position: absolute;
+  left: 5%;
+  bottom: 3%; }
+
+.bt_cont_right {
+  position: absolute;
+  right: 5%;
+  bottom: 3%; }
+
+.button_pop_small {
+  height: 4em;
+  width: 35%;
+  line-height: 4em;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 0.7em;
+  border-radius: 30px;
+  color: #eee;
+  background: #333;
+  opacity: 0.7;
+  box-shadow: 0px 0px 10px #666; }
+
+/*.button_pop_small:hover {
+    opacity: $opacity_sel;
+    color: $color_text_light;
+    font-weight: bold;
+}*/
+.bt_pop_left {
+  position: absolute;
+  left: 3em; }
+
+.bt_pop_right {
+  position: absolute;
+  right: 3em; }
+
+.pop_text {
+  width: 50%;
+  margin-left: 50%;
+  font-size: 0.9em; }
+
+.box-padding1 {
+  padding-left: 3vw;
+  padding-right: 3vw; }
+
+.stats_text {
+  font-size: 1em; }
+
+.scroll-bar-indicator {
+  display: none; }
+
+.overflow-scroll {
+  overflow-y: hidden; }
+
+.element.style {
+  transform: none; }
+
+.scroll-content {
+  transform: none; }
+
+.questions_task {
+  padding-top: 1em;
+  text-align: center;
+  width: 80%;
+  height: 70%;
+  margin-left: 10%; }
+
+.questions_stats {
+  width: 50%;
+  height: 25%;
+  padding-left: 7%;
+  padding-top: 3%; }
+
+.questions_help {
+  width: 25%;
+  height: 100%;
+  display: inline-block; }
+
+.image_help {
+  width: 112%;
+  padding-top: 8%;
+  margin-left: 3%; }
+
+.image_help1 {
+  width: 60%;
+  padding-top: 8%;
+  margin-left: 0; }
+
+.responsive-sm {
+  width: 80%;
+  margin-left: 10%; }
+
+.col {
+  padding: 0; }
+
+.button-outline {
+  color: #eee;
+  background: #3399ff; }
