@@ -9,9 +9,14 @@ angular.module('polda-quiz.controllers', ['timer'])
 	//TODO
 })
 
+.controller('ProfileCtrl', ['$scope', '$location', '$ionicNavBarDelegate', '$log', '$ionicPlatform', 'ContentService', 'GameplayService', 'ProfileService', '$ionicModal', '$ionicHistory', '$ionicPopup', '$state', function() {
+	$scope.profile = ProfileService.all();
+}])
+
 .controller('GameplayCtrl', ['$scope', '$location', '$ionicNavBarDelegate', '$log', '$ionicPlatform', 'ContentService', 'GameplayService', 'ProfileService', '$ionicModal', '$ionicHistory', '$ionicPopup', '$state', function($scope, $location, $ionicNavBarDelegate, $log, $ionicPlatform, ContentService, GameplayService, ProfileService, $ionicModal, $ionicHistory, $ionicPopup, $state) {
 	$scope.$log = $log;
 	$scope.game = GameplayService.all();
+	$scope.profile = ProfileService.all();
 	$scope.selectedOption = 0;
 
 	$ionicPlatform.ready(function() {
@@ -22,6 +27,7 @@ angular.module('polda-quiz.controllers', ['timer'])
 
 	$scope.startGame = function() {
 		$scope.selectedOption = 0;
+		GameplayService.restoreGame();
 		GameplayService.setGameQuestions();
 		var response = GameplayService.setActiveQuestion();
 		if (response === null) {
@@ -34,18 +40,11 @@ angular.module('polda-quiz.controllers', ['timer'])
 				$log.log('nula - sorry nejsou otázky');
 			});
 		} else {
-			$state.go('quick-quiz.game');
+			$state.go('quiz-game.game');
 		}
 	};
 	$scope.nextQuestion = function() {
-		if ($scope.game.gameStatistics.answeredQuestions < 10) {
-			$scope.selectedOption = 0;
-			GameplayService.setActiveQuestion();
-			$scope.$broadcast('timer-set-countdown', 10);
-			$scope.$broadcast('timer-start');
-		} else {
-			$state.go('quick-quiz.pregame');
-		}
+
 	};
 
 	$scope.getHelp = function() {
@@ -72,20 +71,48 @@ angular.module('polda-quiz.controllers', ['timer'])
 		$scope.selectedOption = index + 1;
 		GameplayService.setactiveQuestionAnswered(true);
 		GameplayService.setScoreQuestion(isAnswer);
+
 		if (isAnswer) {
-			$log.log('cool - správně');
-			return true;
+			var alertPopup = $ionicPopup.alert({
+				title: 'Správně!',
+				template: 'Dobře ty!'
+			});
 		} else {
-			$log.log('not so cool - špatně');
-			return false;
+			var alertPopup = $ionicPopup.alert({
+				title: 'Špatně!',
+				template: 'Sorry, detektive...'
+			});
 		}
+		alertPopup.then(function(res) {
+			if ($scope.game.gameStatistics.answeredQuestions < 10) {
+				$scope.selectedOption = 0;
+				GameplayService.setActiveQuestion();
+				$scope.$broadcast('timer-set-countdown', 10);
+				$scope.$broadcast('timer-start');
+			} else {
+				$state.go('quiz-game.pregame');
+			}
+		});
 	};
 
 	$scope.timeLimit = function() {
-		$log.log('Vypršel čas');
 		GameplayService.setactiveQuestionAnswered(true);
 		GameplayService.setScoreQuestion(false);
 		$scope.$apply();
+		var alertPopup = $ionicPopup.alert({
+			title: 'Hmm, ani obraz ani zvuk',
+			template: 'Tak jako ale musíš odpovědět frajere...'
+		});
+		alertPopup.then(function(res) {
+			if ($scope.game.gameStatistics.answeredQuestions < 10) {
+				$scope.selectedOption = 0;
+				GameplayService.setActiveQuestion();
+				$scope.$broadcast('timer-set-countdown', 10);
+				$scope.$broadcast('timer-start');
+			} else {
+				$state.go('quiz-game.pregame');
+			}
+		});
 	};
 
 }]);

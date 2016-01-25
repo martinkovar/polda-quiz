@@ -30,37 +30,42 @@ angular.module('polda-quiz', ['ionic', 'polda-quiz.controllers', 'polda-quiz.ser
 				controller: 'HomeCtrl'
 			})
 		//rychlokvíz
-		.state('quick-quiz', {
-				url: '/quick-quiz',
-				templateUrl: 'templates/quickquiz.html',
+		.state('quiz-game', {
+				url: '/quiz-game',
+				templateUrl: 'templates/quiz.html',
 				abstract: true
 			})
-			.state('quick-quiz.pregame', {
+			.state('quiz-game.pregame', {
 				url: '/pregame',
 				views: {
 					'gamecanvas': {
-						templateUrl: 'templates/quickquiz-pregame.html',
+						templateUrl: 'templates/quiz-pregame.html',
 						controller: 'GameplayCtrl'
 					}
 				}
 			})
-			.state('quick-quiz.game', {
+			.state('quiz-game.game', {
 				url: '/game',
 				views: {
 					'gamecanvas': {
-						templateUrl: 'templates/quickquiz-game.html',
+						templateUrl: 'templates/quiz-game.html',
 						controller: 'GameplayCtrl'
 					}
 				}
 			})
-			.state('quick-quiz.results', {
+			.state('quiz-game.results', {
 				url: '/results',
 				views: {
 					'gamecanvas': {
-						templateUrl: 'templates/quickquiz-results.html',
+						templateUrl: 'templates/quiz-results.html',
 						controller: 'GameplayCtrl'
 					}
 				}
+			})
+			.state('profile', {
+				url: '/profile',
+				templateUrl: 'templates/profile.html',
+				controller: 'ProfileCtrl'
 			})
 			.state('about', {
 				url: '/about',

@@ -7,6 +7,7 @@ angular.module('polda-quiz.services', [])
 				level: 0,
 				generatedQuestions: []
 			},
+			continue: false,
 			questions: {},
 			activeQuestion: {},
 			activeProfile: 0,
@@ -49,16 +50,18 @@ angular.module('polda-quiz.services', [])
 			setGameQuestions: function() {
 				//nacteni sady otazek pro dane kolo
 				_game.questions = ContentService.getGameQuestions(_game.gameSetup.level);
+				_game.questions.continue = true;
 			},
 			setActiveQuestion: function() {
 				_game.activeQuestion = {};
 				_game.isActiveQuestionsAnswered = false;
 
-					console.log(_game.questions);
+					//console.log(_game.questions);
 					if (_game.questions.length > 0) {
 						var randomId = parseInt(Math.floor(Math.random() * _game.questions.length));
-						console.log('nahodne id: ' + randomId + ' a delka pole: ' + _game.questions.length);
+						//console.log('nahodne id: ' + randomId + ' a delka pole: ' + _game.questions.length);
 						var randomQuestion = _game.questions[randomId];
+						//odebrat otazku z pole otazek
 						shuffle(randomQuestion.options);
 						_game.activeQuestion = randomQuestion;
 					}
@@ -85,9 +88,7 @@ angular.module('polda-quiz.services', [])
 				ProfileService.updateStatistics(_game.gameStatistics.successQuestions, _game.gameStatistics.failedQuestions);
 			},
 			restoreGame: function() {
-				_game.gameSetup = {};
-				_game.gameSetup.selectedTopic = 0;
-				_game.gameSetup.selectedlevel = 0;
+				_game.gameSetup.generatedQuestions = [];
 				_game.gameStatistics.failedQuestions = 0;
 				_game.gameStatistics.successQuestions = 0;
 				_game.gameStatistics.answeredQuestions = 0;
@@ -274,14 +275,14 @@ angular.module('polda-quiz.services', [])
 		getGameQuestions: function(level) {
 			//vytridit otazky pro dany level
 			//nahodne vybrat 10 otazek
-			console.log(_questions.length);
+			//console.log(_questions.length);
 			var arr = [];
 			for (var i = 0; i < _questions.length; i++) {
 				if (_questions[i].level === parseInt(level)) {
 					arr.push(_questions[i]);
 				}
 			}
-			console.log(arr.length);
+			//console.log(arr.length);
 			// toto cislo prijde zmenit na 10 az bude dostatecny pocet otazek!!!!!
 			var n = 2;
 			var result = new Array(n),
@@ -301,24 +302,18 @@ angular.module('polda-quiz.services', [])
 
 .factory('ProfileService', ['$q', function($q) {
 	var _localDB;
-	var _profiles; //lokalni cache pro otazky
 
-//starsi
-	var _profile = [{
+	var _profile = {
 		id: 0,
 		name: 'Martin',
 		level: 1,
-		pesona: 0,
-		rewards: [0, 2, 4]
-	}];
-
-	var _statistics = [{
-		total: {
+		statistics: {
 			successQuestions: 0,
 			failedQuestions: 0,
 			answeredQuestions: 0
-		},
-	}];
+		}
+	};
+
 
 	function onDatabaseChange(change) {
 		var index = findIndex(_questions, change.id);
@@ -351,15 +346,15 @@ angular.module('polda-quiz.services', [])
 
 	return {
 		all: function() {
-			return _profiles;
+			return _profile;
 		},
 		getStatistics: function() {
 			return _statistics;
 		},
 		updateStatistics: function(success, failure) {
-			_statistics.total.successQuestions += success;
-			_statistics.total.failedQuestions += failure;
-			_statistics.answeredQuestions += success + failure;
+			_profile.statistics.successQuestions += success;
+			_profile.statistics.failedQuestions += failure;
+			_profile.statistics.answeredQuestions += success + failure;
 		},
 		initDB: function() {
 			_localDB = new PouchDB('profile_database1', {

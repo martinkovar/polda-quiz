@@ -1,0 +1,28 @@
+<ion-view hide-nav-bar="true" view-title="Rychlovka Start">
+	<ion-content>
+    <div class="pop pop-center popup">
+      <div class="pop-cont1 pop-center">
+			      <div class="stats_text title" style="text-align: center;">
+			        <h3>Profil</h3>
+			      </div>
+			<img src="img/polda_nick.png" class="image_pop">
+			<div class="pop_text">
+				<p ng-show="game.continue">
+					Při poslední hře jste zodpověděl {{game.gameStatistics.answeredQuestions}} otázek z toho {{game.gameStatistics.successQuestions}} správně a	{{game.gameStatistics.failedQuestions}} špatně.
+					Vaše úspěšnost je tedy {{(100*game.gameStatistics.successQuestions/game.gameStatistics.answeredQuestions)| number:0}}%
+				</p>
+			</div>
+
+			</div>
+
+
+<div class="pop-cont2 box-padding1  pop-center">
+  <p>
+  	{{profile.name}}, Vaše aktuální hodnost je <strong>{{profile.level}}</strong>.
+  </p>
+</div>
+
+
+</div>
+</ion-content>
+</ion-view>
