@@ -1,7 +1,7 @@
 'use strict';
 angular.module('polda-quiz', ['ionic', 'polda-quiz.controllers', 'polda-quiz.services'])
 
-.run(function($ionicPlatform, ContentService) {
+.run(function($ionicPlatform, ContentService, ProfileService) {
 		$ionicPlatform.ready(function() {
 			if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -14,7 +14,7 @@ angular.module('polda-quiz', ['ionic', 'polda-quiz.controllers', 'polda-quiz.ser
 
 			//inicializace DB a pokus o synchronizaci
 			ContentService.initDB();
-
+			ProfileService.initDB();
 		});
 	})
 	.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
@@ -27,7 +27,7 @@ angular.module('polda-quiz', ['ionic', 'polda-quiz.controllers', 'polda-quiz.ser
 			.state('home', {
 				url: '/',
 				templateUrl: 'templates/home.html',
-				controller: 'HomeCtrl'
+				controller: 'GameplayCtrl'
 			})
 		//rychlokvíz
 		.state('quiz-game', {

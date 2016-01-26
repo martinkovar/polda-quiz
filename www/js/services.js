@@ -40,11 +40,8 @@ angular.module('polda-quiz.services', [])
 			getlevel: function() {
 				return _game.gameSetup.level;
 			},
-			getHistory: function() {
-				return _game.gameSetup.generatedQuestions;
-			},
 			setlevel: function(level) {
-				ProfileService.setLevel(level);
+				ProfileService.updateLevel(level);
 				_game.gameSetup.level = level;
 			},
 			setGameQuestions: function() {
@@ -56,15 +53,15 @@ angular.module('polda-quiz.services', [])
 				_game.activeQuestion = {};
 				_game.isActiveQuestionsAnswered = false;
 
-					//console.log(_game.questions);
-					if (_game.questions.length > 0) {
-						var randomId = parseInt(Math.floor(Math.random() * _game.questions.length));
-						//console.log('nahodne id: ' + randomId + ' a delka pole: ' + _game.questions.length);
-						var randomQuestion = _game.questions[randomId];
-						//odebrat otazku z pole otazek
-						shuffle(randomQuestion.options);
-						_game.activeQuestion = randomQuestion;
-					}
+				//console.log(_game.questions);
+				if (_game.questions.length > 0) {
+					var randomId = parseInt(Math.floor(Math.random() * _game.questions.length));
+					//console.log('nahodne id: ' + randomId + ' a delka pole: ' + _game.questions.length);
+					var randomQuestion = _game.questions[randomId];
+					//TODO odebrat otazku z pole otazek
+					shuffle(randomQuestion.options);
+					_game.activeQuestion = randomQuestion;
+				}
 
 
 				if (_game.activeQuestion === undefined || _game.activeQuestion === null) {
@@ -93,6 +90,9 @@ angular.module('polda-quiz.services', [])
 				_game.gameStatistics.successQuestions = 0;
 				_game.gameStatistics.answeredQuestions = 0;
 				_game.activeQuestion = '';
+			},
+			getHistory: function() {
+				return _game.gameSetup.generatedQuestions;
 			}
 		};
 	}])
@@ -209,64 +209,65 @@ angular.module('polda-quiz.services', [])
 	return {
 		initDB: function() {
 			//vytvoreni lokalni databaze na klientovi
-			_localDB = new PouchDB('quiz_database15', {
+			_localDB = new PouchDB('quiz_questions_db', {
 				adapter: 'websql'
 			});
 			//vraceni vsech dokumentu lokalni databaze
 			$q.when(_localDB.allDocs({
-				include_docs: true
-			}))
-			.then(function(docs) {
-				//naplneni cache (promenne _questions) otazkami z lokalni db
-				_questions = docs.rows.map(function(row) {
-					return row.doc;
-				});
-			})
-			.then(function(){
-				//v priprade prazdne lokalni db
-				if (_questions.length === 0) {
-					//naplneni lokalni db default hodnotami (ktere jsou napevno v kodu)
-					$q.when(_localDB.bulkDocs(defaultQuestions));
-					_questions = defaultQuestions;
-				}
-
-				var _remoteDB = new PouchDB("http://localhost:5984/quiz_database");
-				_localDB.sync(_remoteDB, {
-					// v produkci live a retry vypnout? asi jo
-					//live: true,
-					//retry: true
+					include_docs: true
+				}))
+				.then(function(docs) {
+					//naplneni cache (promenne _questions) otazkami z lokalni db
+					_questions = docs.rows.map(function(row) {
+						return row.doc;
+					});
 				})
-				.on('change', function(info) {
-					// handle change
-					$q.when(_localDB.allDocs({
-						include_docs: true
-					}))
-					.then(function(docs) {
-						//naplneni cache (promenne _questions) otazkami z lokalni db
-						_questions = docs.rows.map(function(row) {
-							return row.doc;
+				.then(function() {
+					//v priprade prazdne lokalni db
+					if (_questions.length === 0) {
+						//naplneni lokalni db default hodnotami (ktere jsou napevno v kodu)
+						$q.when(_localDB.bulkDocs(defaultQuestions));
+						_questions = defaultQuestions;
+					}
+
+					var _remoteDB = new PouchDB("http://localhost:5984/quiz_database");
+					_localDB.sync(_remoteDB, {
+							// v produkci live a retry vypnout? asi jo
+							//live: true,
+							//retry: true
+						})
+						.on('change', function(info) {
+							// handle change
+							$q.when(_localDB.allDocs({
+									include_docs: true
+								}))
+								.then(function(docs) {
+									//naplneni cache (promenne _questions) otazkami z lokalni db
+									_questions = docs.rows.map(function(row) {
+										return row.doc;
+									});
+								});
+						}).on('paused', function() {
+							// replication paused (e.g. user went offline)
+						}).on('active', function() {
+							// replicate resumed (e.g. user went back online)
+						}).on('denied', function(info) {
+							// a document failed to replicate, e.g. due to permissions
+						}).on('complete', function(info) {
+							// handle complete
+							console.log('db synchronizace');
+						}).on('error', function(err) {
+							// prozatim nahradit pop-up konzolovym vypisem
+							$log.log('chyba při synchronizaci');
+							/*var alertPopup = $ionicPopup.alert({
+								title: 'Chyba synchronizace!',
+								template: 'Nelze přistoupit k serverovým datům'
+							});
+							alertPopup.then(function(res) {
+								$log.log('chyba při synchronizaci');
+							});*/
 						});
-					});
-				}).on('paused', function() {
-					// replication paused (e.g. user went offline)
-				}).on('active', function() {
-					// replicate resumed (e.g. user went back online)
-				}).on('denied', function(info) {
-					// a document failed to replicate, e.g. due to permissions
-				}).on('complete', function(info) {
-					// handle complete
-					console.log('db synchronizace');
-				}).on('error', function(err) {
-					// handle error
-					var alertPopup = $ionicPopup.alert({
-						title: 'Chyba synchronizace!',
-						template: 'Nelze přistoupit k serverovým datům'
-					});
-					alertPopup.then(function(res) {
-						$log.log('chyba při synchronizaci');
-					});
 				});
-			});
 		},
 		getQuestions: function() {
 			// Vrátit nacachovaná (lokálně uložená) data
@@ -286,15 +287,15 @@ angular.module('polda-quiz.services', [])
 			// toto cislo prijde zmenit na 10 az bude dostatecny pocet otazek!!!!!
 			var n = 2;
 			var result = new Array(n),
-		        len = arr.length,
-		        taken = new Array(len);
-		    if (n > len)
-		        throw new RangeError("getRandom: more elements taken than available");
-		    while (n--) {
-		        var x = Math.floor(Math.random() * len);
-		        result[n] = arr[x in taken ? taken[x] : x];
-		        taken[x] = --len;
-		    }
+				len = arr.length,
+				taken = new Array(len);
+			if (n > len)
+				throw new RangeError("getRandom: more elements taken than available");
+			while (n--) {
+				var x = Math.floor(Math.random() * len);
+				result[n] = arr[x in taken ? taken[x] : x];
+				taken[x] = --len;
+			}
 			return result;
 		}
 	};
@@ -302,32 +303,21 @@ angular.module('polda-quiz.services', [])
 
 .factory('ProfileService', ['$q', function($q) {
 	var _localDB;
-
-	var _profile = {
-		id: 0,
-		name: 'Martin',
-		level: 1,
-		statistics: {
-			successQuestions: 0,
-			failedQuestions: 0,
-			answeredQuestions: 0
-		}
-	};
-
+	var _profiles;
 
 	function onDatabaseChange(change) {
-		var index = findIndex(_questions, change.id);
-		var question = _questions[index];
+		var index = findIndex(_profiles, change.id);
+		var profile = _profiles[index];
 
 		if (change.deleted) {
-			if (question) {
-				_questions.splice(index, 1); // delete
+			if (profile) {
+				_profiles.splice(index, 1); // delete
 			}
 		} else {
-			if (question && question._id === change.id) {
-				_questions[index] = change.doc; // update
+			if (quesprofiletion && profile._id === change.id) {
+				_profiles[index] = change.doc; // update
 			} else {
-				_questions.splice(index, 0, change.doc); // insert
+				_profiles.splice(index, 0, change.doc); // insert
 			}
 		}
 	}
@@ -344,105 +334,97 @@ angular.module('polda-quiz.services', [])
 		return low;
 	}
 
+	function setProfile(profile) {
+		_localDB.put(profile, function callback(err, result) {
+			if (!err) {
+				console.log('Successfully posted a profile!');
+			}
+		});
+	}
+
 	return {
+		initDB: function() {
+			_localDB = new PouchDB('quiz_profiles_db', {
+				adapter: 'websql'
+			});
+
+			$q.when(_localDB.allDocs({
+					include_docs: true
+				}))
+				.then(function(docs) {
+					console.log("naplneni cache profilem z lokalni db");
+					_profiles = docs.rows.map(function(row) {
+						return row.doc;
+					});
+				})
+				.then(function() {
+					//naplneni lokalni db default hodnotami v priprade prazdne lokalni db
+					if (_profiles.length === 0) {
+						console.log("defaultni naplneni profilem v pripade prazdne lokalni db");
+						var defaultProfile = [{
+							_id: 1,
+							name: 'Nick',
+							level: 5,
+							statistics: {
+								successQuestions: 0,
+								failedQuestions: 0,
+								answeredQuestions: 0
+							}
+						}];
+						$q.when(_localDB.bulkDocs(defaultProfile));
+						_profiles = defaultProfile;
+					}
+				});
+
+				_localDB.changes({
+					live: true,
+					since: 'now',
+					include_docs: true
+				}).on('change', onDatabaseChange);
+
+		},
 		all: function() {
-			return _profile;
+			return _profiles;
 		},
 		getStatistics: function() {
 			return _statistics;
 		},
 		updateStatistics: function(success, failure) {
-			_profile.statistics.successQuestions += success;
-			_profile.statistics.failedQuestions += failure;
-			_profile.statistics.answeredQuestions += success + failure;
+			_profiles.statistics.successQuestions += success;
+			_profiles.statistics.failedQuestions += failure;
+			_profiles.statistics.answeredQuestions += success + failure;
 		},
-		initDB: function() {
-			_localDB = new PouchDB('profile_database1', {
-				adapter: 'websql'
-			});
-
-			$q.when(_localDB.allDocs({
-				include_docs: true
-			}))
-			/*
-			.then(function(docs) {
-				//console.log("naplneni cache otazkami z lokalni db");
-				_questions = docs.rows.map(function(row) {
-					return row.doc;
-				});
-			})*/
-			.then(function(){
-				//naplneni lokalni db default hodnotami v priprade prazdne lokalni db
-				if (_questions.length === 0) {
-					//console.log("defaultni naplneni otazkami v pripade prazdne lokalni db");
-					// TOTO SE MUSÍ SYNCHRONIZOVAT!!!!!
-					$q.when(_localDB.bulkDocs(defaultQuestions));
-					_profiles = defaultQuestions;
+		resetProfile: function() {
+			_profiles = {
+				_id: 1,
+				name: 'Odpadlík',
+				level: 1,
+				statistics: {
+					successQuestions: 0,
+					failedQuestions: 0,
+					answeredQuestions: 0
 				}
-
-				var _remoteDB = new PouchDB("http://localhost:5984/profile_database");
-				_localDB.sync(_remoteDB, {
-					// v produkci live a retry vypnout? asi jo
-					//live: true,
-					//retry: true
-				})
-				.on('change', function(info) {
-					// handle change
-				}).on('paused', function() {
-					// replication paused (e.g. user went offline)
-				}).on('active', function() {
-					// replicate resumed (e.g. user went back online)
-				}).on('denied', function(info) {
-					// a document failed to replicate, e.g. due to permissions
-				}).on('complete', function(info) {
-					// handle complete
-					console.log('db synchronizace');
-				}).on('error', function(err) {
-					// handle error
-					var alertPopup = $ionicPopup.alert({
-						title: 'Chyba synchronizace!',
-						template: 'Nelze přistoupit k serverovým datům'
-					});
-					alertPopup.then(function(res) {
-						$log.log('chyba při synchronizaci');
-					});
-				});
-			});
+			};
+			setProfile(_profiles);
+			return _profiles;
 		},
-        addProfile: function() {},
-        updateProfile: function() {},
-        deleteProfile: function() {},
-		getProfile: function(level) {
+		getProfile: function() {
 			if (!_profiles) {
-				return $q.when(_localDB.allDocs({
-						include_docs: true
-					}))
-					.then(function(docs) {
-						_profiles = docs.rows.map(function(row) {
-							return row.doc;
-						});
-
-						// Listen for changes on the database.
-						_localDB.changes({
-							live: true,
-							since: 'now',
-							include_docs: true
-						})
-						.on('change', onDatabaseChange);
-
-						return _profiles;
-					});
-
+				$q.when(_localDB.allDocs({
+					include_docs: true
+				}, function(err, doc) {
+					_profiles = doc.rows;
+					return _profiles;
+				}));
 			} else {
-				// Vrátit nacachovaná (lokálně uložená) data
-				return $q.when(_profiles);
+				return _profiles;
 			}
 		},
-		setLevel: function(level) {
-
-		},
-		getLevel: function() {
-
+		setLevel: function(lvl) {
+			if (parseInt(lvl) >= 0) {
+				_profiles.level = lvl;
+			}
+			setProfile(_profiles);
 		}
 	};
 

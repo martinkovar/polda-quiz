@@ -3,56 +3,48 @@
     <button class="button button-icon icon ion-android-cancel" ng-click="exitGame()"></button>
   </ion-nav-buttons>
   <ion-content>
-  <div class="cont">
-    <div class="cont1 body_color_dark" style="color: white; text-align:center; padding-top:0.8em;">REKLAMA!</div>
+    <div class="cont">
+      <div class="cont1 body_color_dark" style="color: white; text-align:center; padding-top:0.8em;">REKLAMA!</div>
 
-    <div class="cont2">
-      <div class="questions_task">
-        <div class="row row-center" style="border: 1px solid black; border-radius: 30px;height: 100%;">
-          {{ game.activeQuestion.question }}
+      <div class="cont2">
+        <div class="questions_task">
+          <div class="row row-center" style="border: 1px solid black; border-radius: 30px;height: 100%;">
+            {{ game.activeQuestion.question }}
+          </div>
         </div>
-      </div>
-      <div class="row " style="margin-top: 0">
-        <div class="questions_stats col1 col-center">
-          Otázka:
-          {{game.gameStatistics.answeredQuestions}}
+        <div class="row " style="margin-top: 0">
+          <div class="questions_stats col1 col-center">
+            Otázka:
+            {{game.gameStatistics.answeredQuestions}}
+          </br>
+          Úspěšnost:
+          {{(100*game.gameStatistics.successQuestions/game.gameStatistics.answeredQuestions)| number:0}}%
         </br>
-        Úspěšnost:
-        {{(100*game.gameStatistics.successQuestions/game.gameStatistics.answeredQuestions)| number:0}}%
+        Správně:
+        {{game.gameStatistics.successQuestions}}
       </br>
-      Správně:
-      {{game.gameStatistics.successQuestions}}
-    </br>
-  <!--  Špatně:
-    {{game.gameStatistics.failedQuestions}}
-  </br>-->
-  Časový limit:
-  <timer countdown="10" finish-callback="timeLimit()" interval="1000">{{countdown}}</timer>
+      Časový limit:
+      <timer countdown="10" finish-callback="timeLimit()" interval="1000">{{countdown}}</timer>
+    </div>
+
+    <div class="questions_help col2 col-center ">
+      <a class="button" ng-disabled="clueUsed" ng-click="getClue()">50/50</a>
+    </div>
+    <div class="questions_help col3 col-center">
+      <a class="button" ng-disabled="clueUsed" ng-click="getClue()">Náhodná</a>
+    </div>
+  </div>
 </div>
 
-<!--<div class="questions_help col2 col-center ">
-  <img src="img/50-50.png" class="image_help"></div>
-
-<div class="questions_help col3 col-center">
-  <img src="img/hel_icon.png" class="image_help1"></div>
-</div>-->
-</div>
-</div>
 <div class="cont3">
 <div class="responsive-sm options">
-<button class="col button option item_cont_large" ng-class="{'button-balanced':option.isAnswer && game.isActiveQuestionsAnswered,  'button-assertive':!option.isAnswer && ($index + 1 == selectedOption) && game.isActiveQuestionsAnswered}" ng-click="answer($index, option.isAnswer)" ng-disabled="game.isActiveQuestionsAnswered" ng-repeat="option in game.activeQuestion.options">
-  <span>{{ option.text }}</span>
-</button>
+  <button class="col button option item_cont_large" ng-class="{'button-balanced':option.isAnswer && game.isActiveQuestionsAnswered,  'button-assertive':!option.isAnswer && ($index + 1 == selectedOption) && game.isActiveQuestionsAnswered}" ng-click="answer($index, option.isAnswer)" ng-disabled="game.isActiveQuestionsAnswered" ng-repeat="option in game.activeQuestion.options">
+    <span>{{ option.text }}</span>
+  </button>
 </div>
 
 </div>
-
-<!--div class="cont4">
-<a class="button button_cont_small bt_cont_right" ng-click="nextQuestion()" ng-disabled="!game.isActiveQuestionsAnswered">{{ game.gameStatistics.answeredQuestions < 10 ? "Další" : "Zobrazit výsledky" }}</a>
-</div-->
-
-<!--a class="button button-block button-stable">Singleplayer</a>
-	        <a class="button button-block button-stable">Multiplayer</a-->
+</div>
 
 </ion-content>
 </ion-view>
