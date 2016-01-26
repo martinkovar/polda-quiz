@@ -11,6 +11,9 @@
 		Při poslední hře jste zodpověděl {{game.gameStatistics.answeredQuestions}} otázek z toho {{game.gameStatistics.successQuestions}} správně a	{{game.gameStatistics.failedQuestions}} špatně.
 		Vaše úspěšnost je tedy {{(100*game.gameStatistics.successQuestions/game.gameStatistics.answeredQuestions)| number:0}}%
 	</p>
+	<p ng-show="profile.level == 0">
+		Tak tohle je tvoje první šichta...
+	</p>
 </div>
 
 </div>

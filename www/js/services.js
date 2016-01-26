@@ -379,6 +379,8 @@ angular.module('polda-quiz.services', [])
 								console.log("defaultni naplneni se nepovedlo");
 								console.log(err);
 							});
+						} else {
+							_profile = _profile[0];
 						}
 
 						_localDB.changes({
@@ -437,7 +439,7 @@ angular.module('polda-quiz.services', [])
 			}
 		},
 		getLevel: function() {
-			return _profile[0].level;
+			return _profile.level;
 		}
 	};
 

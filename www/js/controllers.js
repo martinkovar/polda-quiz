@@ -27,7 +27,7 @@ angular.module('polda-quiz.controllers', ['timer'])
 		$scope.selectedOption = 0;
 		$scope.clueUsed = false;
 		ProfileService.initDB().then(function(response) {
-			$scope.profile = response[0];
+			$scope.profile = response;
 			console.log($scope.profile);
 		});
 	});
