@@ -13,8 +13,9 @@ angular.module('polda-quiz', ['ionic', 'polda-quiz.controllers', 'polda-quiz.ser
 			}
 
 			//inicializace DB a pokus o synchronizaci
-			ContentService.initDB();
-			ProfileService.initDB();
+			//TODO zapracovat loading mechanismus (UX prvek)
+			//ContentService.initDB();
+			//ProfileService.initDB();
 		});
 	})
 	.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {

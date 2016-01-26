@@ -37,16 +37,17 @@ angular.module('polda-quiz.services', [])
 			all: function() {
 				return _game;
 			},
-			getlevel: function() {
-				return _game.gameSetup.level;
+			getLevel: function() {
+				return ProfileService.getLevel();
 			},
-			setlevel: function(level) {
+			setLevel: function(level) {
 				ProfileService.updateLevel(level);
-				_game.gameSetup.level = level;
+				//ProfileService.getLevel() = level;
 			},
 			setGameQuestions: function() {
 				//nacteni sady otazek pro dane kolo
-				_game.questions = ContentService.getGameQuestions(_game.gameSetup.level);
+				console.log(ProfileService.getLevel());
+				_game.questions = ContentService.getGameQuestions(ProfileService.getLevel());
 				_game.questions.continue = true;
 			},
 			setActiveQuestion: function() {
@@ -62,7 +63,6 @@ angular.module('polda-quiz.services', [])
 					shuffle(randomQuestion.options);
 					_game.activeQuestion = randomQuestion;
 				}
-
 
 				if (_game.activeQuestion === undefined || _game.activeQuestion === null) {
 					return null;
@@ -82,7 +82,7 @@ angular.module('polda-quiz.services', [])
 				}
 			},
 			setGameScore: function() {
-				ProfileService.updateStatistics(_game.gameStatistics.successQuestions, _game.gameStatistics.failedQuestions);
+				ProfileService.setStatistics(_game.gameStatistics.successQuestions, _game.gameStatistics.failedQuestions);
 			},
 			restoreGame: function() {
 				_game.gameSetup.generatedQuestions = [];
@@ -90,9 +90,6 @@ angular.module('polda-quiz.services', [])
 				_game.gameStatistics.successQuestions = 0;
 				_game.gameStatistics.answeredQuestions = 0;
 				_game.activeQuestion = '';
-			},
-			getHistory: function() {
-				return _game.gameSetup.generatedQuestions;
 			}
 		};
 	}])
@@ -115,8 +112,7 @@ angular.module('polda-quiz.services', [])
 		}, {
 			text: 'Mononukleóza'
 		}],
-		level: 0,
-		topic: 0
+		level: 0
 	}, {
 		id: 1,
 		question: 'Proč je voda mokrá?',
@@ -130,8 +126,7 @@ angular.module('polda-quiz.services', [])
 		}, {
 			text: 'Mononukleóza'
 		}],
-		level: 0,
-		topic: 0
+		level: 0
 	}, {
 		id: 2,
 		question: 'Kdo je Albert Einstein?',
@@ -145,36 +140,49 @@ angular.module('polda-quiz.services', [])
 			text: 'Mononukleóza',
 			isAnswer: true
 		}],
-		level: 0,
-		topic: 0
-	}];
-
-	var _topics = [{
-		id: 0,
-		title: 'Estonská vína',
-		desc: ''
-	}, {
-		id: 1,
-		title: 'Telegrafní sloupy 19. století',
-		desc: ''
+		level: 0
 	}, {
 		id: 2,
-		title: 'Lidové tance',
-		desc: ''
-	}];
-
-	var _difficulties = [{
-		id: 0,
-		title: 'Lehká',
-		desc: ''
-	}, {
-		id: 1,
-		title: 'Tak akorát',
-		desc: ''
+		question: 'Kdo je Albert Einstein?',
+		options: [{
+			text: 'Tučňák'
+		}, {
+			text: 'Samice hrabáče'
+		}, {
+			text: 'Zaoceánský parník'
+		}, {
+			text: 'Mononukleóza',
+			isAnswer: true
+		}],
+		level: 5
 	}, {
 		id: 2,
-		title: 'Krutopřísná',
-		desc: ''
+		question: 'Kdo je Albert Einstein?',
+		options: [{
+			text: 'Tučňák'
+		}, {
+			text: 'Samice hrabáče'
+		}, {
+			text: 'Zaoceánský parník'
+		}, {
+			text: 'Mononukleóza',
+			isAnswer: true
+		}],
+		level: 5
+	}, {
+		id: 2,
+		question: 'Kdo je Albert Einstein?',
+		options: [{
+			text: 'Tučňák'
+		}, {
+			text: 'Samice hrabáče'
+		}, {
+			text: 'Zaoceánský parník'
+		}, {
+			text: 'Mononukleóza',
+			isAnswer: true
+		}],
+		level: 5
 	}];
 
 	function onDatabaseChange(change) {
@@ -209,7 +217,7 @@ angular.module('polda-quiz.services', [])
 	return {
 		initDB: function() {
 			//vytvoreni lokalni databaze na klientovi
-			_localDB = new PouchDB('quiz_questions_db', {
+			_localDB = new PouchDB('quiz_questions_db3', {
 				adapter: 'websql'
 			});
 			//vraceni vsech dokumentu lokalni databaze
@@ -274,16 +282,12 @@ angular.module('polda-quiz.services', [])
 			return $q.when(_questions);
 		},
 		getGameQuestions: function(level) {
-			//vytridit otazky pro dany level
-			//nahodne vybrat 10 otazek
-			//console.log(_questions.length);
 			var arr = [];
 			for (var i = 0; i < _questions.length; i++) {
 				if (_questions[i].level === parseInt(level)) {
 					arr.push(_questions[i]);
 				}
 			}
-			//console.log(arr.length);
 			// toto cislo prijde zmenit na 10 az bude dostatecny pocet otazek!!!!!
 			var n = 2;
 			var result = new Array(n),
@@ -303,21 +307,21 @@ angular.module('polda-quiz.services', [])
 
 .factory('ProfileService', ['$q', function($q) {
 	var _localDB;
-	var _profiles;
+	var _profile;
 
 	function onDatabaseChange(change) {
-		var index = findIndex(_profiles, change.id);
-		var profile = _profiles[index];
-
+		var index = findIndex(_profile, change.id);
+		var profile = _profile[index];
+		//update scope
 		if (change.deleted) {
 			if (profile) {
-				_profiles.splice(index, 1); // delete
+				_profile.splice(index, 1); // delete
 			}
 		} else {
 			if (quesprofiletion && profile._id === change.id) {
-				_profiles[index] = change.doc; // update
+				_profile[index] = change.doc; // update
 			} else {
-				_profiles.splice(index, 0, change.doc); // insert
+				_profile.splice(index, 0, change.doc); // insert
 			}
 		}
 	}
@@ -344,59 +348,63 @@ angular.module('polda-quiz.services', [])
 
 	return {
 		initDB: function() {
-			_localDB = new PouchDB('quiz_profiles_db', {
+			_localDB = new PouchDB('quiz_profile_db3', {
 				adapter: 'websql'
 			});
+			if (!_profile) {
+				return $q.when(_localDB.allDocs({
+						include_docs: true
+					}))
+					.then(function(docs) {
+						console.log("naplneni cache profilem z lokalni db");
+						_profile = docs.rows.map(function(row) {
+							return row.doc;
+						});
+						//console.log(_profile);
+						if (_profile.length === 0) {
+							var defaultProfile = {
+								_id: "1",
+								name: 'Nick',
+								level: 5,
+								statistics: {
+									successQuestions: 0,
+									failedQuestions: 0,
+									answeredQuestions: 0
+								}
+							};
+							_localDB.bulkDocs([defaultProfile]).then(function(docs) {
+								_profile = defaultProfile;
+								console.log("defaultni naplneni profilem v pripade prazdne lokalni db");
+							}).catch(function(err) {
+								console.log("defaultni naplneni se nepovedlo");
+								console.log(err);
+							});
+						}
 
-			$q.when(_localDB.allDocs({
-					include_docs: true
-				}))
-				.then(function(docs) {
-					console.log("naplneni cache profilem z lokalni db");
-					_profiles = docs.rows.map(function(row) {
-						return row.doc;
+						_localDB.changes({
+							live: true,
+							since: 'now',
+							include_docs: true
+						}).on('change', onDatabaseChange);
+
+						return _profile;
 					});
-				})
-				.then(function() {
-					//naplneni lokalni db default hodnotami v priprade prazdne lokalni db
-					if (_profiles.length === 0) {
-						console.log("defaultni naplneni profilem v pripade prazdne lokalni db");
-						var defaultProfile = [{
-							_id: 1,
-							name: 'Nick',
-							level: 5,
-							statistics: {
-								successQuestions: 0,
-								failedQuestions: 0,
-								answeredQuestions: 0
-							}
-						}];
-						$q.when(_localDB.bulkDocs(defaultProfile));
-						_profiles = defaultProfile;
-					}
-				});
-
-				_localDB.changes({
-					live: true,
-					since: 'now',
-					include_docs: true
-				}).on('change', onDatabaseChange);
-
-		},
-		all: function() {
-			return _profiles;
+			} else {
+				console.log("vraceni chache profilu");
+				return $q.when(_profile);
+			}
 		},
 		getStatistics: function() {
 			return _statistics;
 		},
-		updateStatistics: function(success, failure) {
-			_profiles.statistics.successQuestions += success;
-			_profiles.statistics.failedQuestions += failure;
-			_profiles.statistics.answeredQuestions += success + failure;
+		setStatistics: function(success, failure) {
+			_profile.statistics.successQuestions += success;
+			_profile.statistics.failedQuestions += failure;
+			_profile.statistics.answeredQuestions += success + failure;
 		},
 		resetProfile: function() {
-			_profiles = {
-				_id: 1,
+			_profile = {
+				_id: "1",
 				name: 'Odpadlík',
 				level: 1,
 				statistics: {
@@ -405,26 +413,31 @@ angular.module('polda-quiz.services', [])
 					answeredQuestions: 0
 				}
 			};
-			setProfile(_profiles);
-			return _profiles;
+			setProfile(_profile);
+			return _profile;
 		},
 		getProfile: function() {
-			if (!_profiles) {
-				$q.when(_localDB.allDocs({
+			if (!_profile) {
+				_localDB.allDocs({
 					include_docs: true
-				}, function(err, doc) {
-					_profiles = doc.rows;
-					return _profiles;
-				}));
+				}).then(function(doc) {
+					_profile = doc.rows;
+				}).catch(function(err) {
+					// oh noes! we got an error
+				});
 			} else {
-				return _profiles;
+				//doplnit vraceni cache dat
+				return _profile;
 			}
 		},
 		setLevel: function(lvl) {
 			if (parseInt(lvl) >= 0) {
-				_profiles.level = lvl;
+				_profile.level = lvl;
+				setProfile(_profile);
 			}
-			setProfile(_profiles);
+		},
+		getLevel: function() {
+			return _profile[0].level;
 		}
 	};
 

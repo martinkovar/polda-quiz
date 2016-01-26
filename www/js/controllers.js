@@ -17,23 +17,22 @@ angular.module('polda-quiz.controllers', ['timer'])
 
 }])
 
-.controller('GameplayCtrl', ['$scope', '$location', '$ionicNavBarDelegate', '$log', '$ionicPlatform', 'ContentService', 'GameplayService', 'ProfileService', '$ionicModal', '$ionicHistory', '$ionicPopup', '$state', function($scope, $location, $ionicNavBarDelegate, $log, $ionicPlatform, ContentService, GameplayService, ProfileService, $ionicModal, $ionicHistory, $ionicPopup, $state) {
-	$scope.$log = $log;
-	$scope.game = GameplayService.all();
-	$scope.selectedOption = 0;
-	$scope.clueUsed = false;
-	$scope.profile = ProfileService.getProfile();
+.controller('GameplayCtrl', ['$scope', '$location', '$ionicNavBarDelegate', '$log', '$ionicPlatform', 'ContentService', 'GameplayService', 'ProfileService', '$ionicModal', '$ionicHistory', '$ionicPopup', '$state', '$ionicLoading', function($scope, $location, $ionicNavBarDelegate, $log, $ionicPlatform, ContentService, GameplayService, ProfileService, $ionicModal, $ionicHistory, $ionicPopup, $state, $ionicLoading) {
 
 	$ionicPlatform.ready(function() {
-		/*ContentService.getQuestions().then(function(questions) {
-			$scope.questions = questions;
+		ContentService.initDB();
+
+		$scope.$log = $log;
+		$scope.game = GameplayService.all();
+		$scope.selectedOption = 0;
+		$scope.clueUsed = false;
+		ProfileService.initDB().then(function(response) {
+			$scope.profile = response[0];
+			console.log($scope.profile);
 		});
-		ProfileService.getProfile().then(function(profile) {
-			$scope.profile = profile;
-			console.log("nacteny profil");
-		});*/
-		console.log($scope.profile);
 	});
+
+
 
 	function roundEvaluation() {
 		//zapis zmenene statistiky
@@ -49,7 +48,14 @@ angular.module('polda-quiz.controllers', ['timer'])
 		}
 		$state.go('quiz-game.pregame');
 	}
-
+	$scope.showLoading = function() {
+	    $ionicLoading.show({
+	      template: 'Loading...'
+	    });
+	  };
+	  $scope.hideLoading = function(){
+	    $ionicLoading.hide();
+	  };
 	$scope.newCareer = function() {
 		var alertPopup = $ionicPopup.alert({
 			title: 'Nová hra',
