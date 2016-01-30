@@ -21,7 +21,6 @@ angular.module('polda-quiz.controllers', ['timer'])
 
 	$ionicPlatform.ready(function() {
 		ContentService.initDB();
-
 		$scope.$log = $log;
 		$scope.game = GameplayService.all();
 		$scope.selectedOption = 0;
@@ -30,6 +29,25 @@ angular.module('polda-quiz.controllers', ['timer'])
 			$scope.profile = response;
 			//console.log($scope.profile);
 		});
+		$scope.rankLabel = [
+'Rekrut',
+'Rotný',
+'Strážmistr',
+'Nadstrážmistr',
+'Podpraporčík',
+'Praporčík',
+'Nadpraporčík',
+'Podporučík',
+'Poručík',
+'Nadporučík',
+'Kapitán',
+'Major',
+'Podplukovník',
+'Plukovník',
+'Brigádní generál',
+'Generálmajor',
+'Generálporučík'
+];
 	});
 
 
@@ -138,7 +156,7 @@ angular.module('polda-quiz.controllers', ['timer'])
 		$scope.timerRunning = false;
 		$scope.selectedOption = index + 1;
 		GameplayService.setActiveQuestionAnswered(true);
-		GameplayService.setScoreQuestion(isAnswer);
+
 
 		if (isAnswer) {
 			var alertPopup = $ionicPopup.alert({
@@ -152,6 +170,7 @@ angular.module('polda-quiz.controllers', ['timer'])
 			});
 		}
 		alertPopup.then(function(res) {
+			GameplayService.setScoreQuestion(isAnswer);
 			if ($scope.game.gameStatistics.answeredQuestions < 10) {
 				$scope.selectedOption = 0;
 				GameplayService.setActiveQuestion();
@@ -168,8 +187,9 @@ angular.module('polda-quiz.controllers', ['timer'])
 			title: 'Nezodpovězeno!',
 			template: 'Sorry, musíš se vymáčknout...'
 		});
-
 		alertPopup.then(function(res) {
+			GameplayService.setScoreQuestion(false);
+			GameplayService.setActiveQuestionAnswered(true);
 			if ($scope.game.gameStatistics.answeredQuestions < 10) {
 				$scope.selectedOption = 0;
 				GameplayService.setActiveQuestion();
@@ -179,10 +199,7 @@ angular.module('polda-quiz.controllers', ['timer'])
 				roundEvaluation();
 			}
 		});
-		GameplayService.setActiveQuestionAnswered(true);
-		GameplayService.setScoreQuestion(false);
 		$scope.$apply();
-
 	};
 
 }]);

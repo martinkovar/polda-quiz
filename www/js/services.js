@@ -48,7 +48,7 @@ angular.module('polda-quiz.services', [])
 				//nacteni sady otazek pro dane kolo
 				//console.log(ProfileService.getLevel());
 				_game.questions = ContentService.getGameQuestions(ProfileService.getLevel());
-				_game.questions.continue = true;
+				_game.continue = true;
 			},
 			setActiveQuestion: function() {
 				_game.activeQuestion = {};

@@ -7,10 +7,7 @@
       </div>
 <img src="img/polda_nick.png" class="image_pop">
 <div class="pop_text">
-	<p ng-show="game.continue">
-		Při poslední hře jste zodpověděl {{game.gameStatistics.answeredQuestions}} otázek z toho {{game.gameStatistics.successQuestions}} správně a	{{game.gameStatistics.failedQuestions}} špatně.
-		Vaše úspěšnost je tedy {{(100*game.gameStatistics.successQuestions/game.gameStatistics.answeredQuestions)| number:0}}%
-	</p>
+
 	<p ng-show="profile.level == 0">
 		Tak tohle je tvoje první šichta...
 	</p>
@@ -21,10 +18,14 @@
 
 <div class="pop-cont2 box-padding1  pop-center">
   <p>
-  	{{profile.name}}, Vaše aktuální hodnost je <strong>{{profile.level}}</strong>.
+  	{{profile.name}}, Vaše aktuální hodnost je <strong>{{rankLabel[profile.level]}}</strong>.
+  </p>
+  <p ng-show="game.continue">
+	  Při poslední hře jste zodpověděl {{game.gameStatistics.answeredQuestions}} otázek z toho {{game.gameStatistics.successQuestions}} správně a	{{game.gameStatistics.failedQuestions}} špatně.
+	  Vaše úspěšnost je tedy {{(100*game.gameStatistics.successQuestions/game.gameStatistics.answeredQuestions)| number:0}}%
   </p>
 <p>
-	Pro postup na hodnost xxxx Musíš mít úspěšnost xxx % v příštích xx otázkách.
+	Pro postup na hodnost {{rankLabel[profile.level + 1]}} Musíš mít úspěšnost alespoň 60% v příštích 10 otázkách.
 </p>
 
 </div>
