@@ -312,20 +312,22 @@ angular.module('polda-quiz.services', [])
 	var _profile;
 
 	function onDatabaseChange(change) {
+console.log(change);
 		var index = findIndex(_profile, change.id);
 		var profile = _profile[index];
-		//update scope
-		/*if (change.deleted) {
+		if (change.deleted) {
 			if (profile) {
-				_profile.splice(index, 1); // delete
+				//_profile.splice(index, 1); // delete
 			}
 		} else {
-			if (profile && _profile._id === change.id) {
-				_profile[index] = change.doc; // update
+			if (profile && profile._id === change.id) {
+				//_profile[index] = change.doc; // update
+				_profile = change.doc; // update
 			} else {
-				_profile.splice(index, 0, change.doc); // insert
+				//_profile.splice(index, 0, change.doc); // insert
+				_profile = change.doc; // insert
 			}
-		}*/
+		}
 	}
 
 	// Binarni hledani, pole je defaultne razeno podle _id.

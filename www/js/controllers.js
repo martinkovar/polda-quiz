@@ -26,8 +26,15 @@ angular.module('polda-quiz.controllers', ['timer'])
 		$scope.selectedOption = 0;
 		$scope.clueUsed = false;
 		ProfileService.initDB().then(function(response) {
-			$scope.profile = response;
-			//console.log($scope.profile);
+			//$scope.profile = response;
+			$scope.$watch(function () { return ProfileService.getProfile() }, function (newVal, oldVal) {
+			    if (typeof newVal !== 'undefined') {
+					$scope.profile = ProfileService.getProfile();
+			    }
+			});
+
+
+
 		});
 		$scope.ranks = [
 {'level': 0,'name': 'Rekrut', 'successRate': 60, 'failRate': 40},
