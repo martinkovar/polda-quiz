@@ -29,24 +29,24 @@ angular.module('polda-quiz.controllers', ['timer'])
 			$scope.profile = response;
 			//console.log($scope.profile);
 		});
-		$scope.rankLabel = [
-'Rekrut',
-'Rotný',
-'Strážmistr',
-'Nadstrážmistr',
-'Podpraporčík',
-'Praporčík',
-'Nadpraporčík',
-'Podporučík',
-'Poručík',
-'Nadporučík',
-'Kapitán',
-'Major',
-'Podplukovník',
-'Plukovník',
-'Brigádní generál',
-'Generálmajor',
-'Generálporučík'
+		$scope.ranks = [
+{'level': 0,'name': 'Rekrut', 'successRate': 60, 'failRate': 40},
+{'level': 1,'name': 'Rotný', 'successRate': 60, 'failRate': 40},
+{'level': 2,'name': 'Strážmistr', 'successRate': 60, 'failRate': 40},
+{'level': 3,'name': 'Nadstrážmistr', 'successRate': 60, 'failRate': 40},
+{'level': 4,'name': 'Podpraporčík', 'successRate': 60, 'failRate': 40},
+{'level': 5,'name': 'Praporčík', 'successRate': 60, 'failRate': 40},
+{'level': 6,'name': 'Nadpraporčík', 'successRate': 60, 'failRate': 40},
+{'level': 7,'name': 'Podporučík', 'successRate': 60, 'failRate': 40},
+{'level': 8,'name': 'Poručík', 'successRate': 60, 'failRate': 40},
+{'level': 9,'name': 'Nadporučík', 'successRate': 60, 'failRate': 40},
+{'level': 10,'name': 'Kapitán', 'successRate': 60, 'failRate': 40},
+{'level': 11,'name': 'Major', 'successRate': 60, 'failRate': 40},
+{'level': 12,'name': 'Podplukovník', 'successRate': 60, 'failRate': 40},
+{'level': 13,'name': 'Plukovník', 'successRate': 60, 'failRate': 40},
+{'level': 14,'name': 'Brigádní generál', 'successRate': 60, 'failRate': 40},
+{'level': 15,'name': 'Generálmajor', 'successRate': 60, 'failRate': 40},
+{'level': 16,'name': 'Generálporučík', 'successRate': 60, 'failRate': 40}
 ];
 	});
 
@@ -56,10 +56,10 @@ angular.module('polda-quiz.controllers', ['timer'])
 		//zapis zmenene statistiky
 		GameplayService.setGameScore();
 		//udelej zmenu v levelu
-		console.log(100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions);
-		if((100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions) > 40) {
+		//console.log(100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions);
+		if((100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions) > $scope.ranks[$scope.profile.level].successRate) {
 			ProfileService.setLevel($scope.profile.level + 1);
-		} else if ((100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions) < 20) {
+		} else if ((100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions) < $scope.ranks[$scope.profile.level].failRate) {
 			ProfileService.setLevel($scope.profile.level - 1);
 		} else {
 			//nemenit profil
@@ -75,12 +75,12 @@ angular.module('polda-quiz.controllers', ['timer'])
 	    $ionicLoading.hide();
 	  };
 	$scope.newCareer = function() {
-		var alertPopup = $ionicPopup.alert({
+		var confirmPopup = $ionicPopup.confirm({
 			title: 'Nová hra',
 			template: 'Opravdu chcete začít novou hru? Přijdete o veškeré hodnosti..'
 		});
 
-		alertPopup.then(function(res) {
+		confirmPopup.then(function(res) {
 			if (res) {
 				//vymazani profilu
 				$scope.profile = ProfileService.resetProfile();
@@ -144,7 +144,9 @@ angular.module('polda-quiz.controllers', ['timer'])
 		});
 		confirmPopup.then(function(res) {
 			if (res) {
-				$state.go('home');
+				$scope.$broadcast('timer-clear');
+				$scope.timerRunning = false;
+				roundEvaluation();
 			} else {
 				//zruseno
 			}

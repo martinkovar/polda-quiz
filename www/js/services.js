@@ -315,17 +315,17 @@ angular.module('polda-quiz.services', [])
 		var index = findIndex(_profile, change.id);
 		var profile = _profile[index];
 		//update scope
-		if (change.deleted) {
+		/*if (change.deleted) {
 			if (profile) {
 				_profile.splice(index, 1); // delete
 			}
 		} else {
-			if (quesprofiletion && _profile._id === change.id) {
+			if (profile && _profile._id === change.id) {
 				_profile[index] = change.doc; // update
 			} else {
 				_profile.splice(index, 0, change.doc); // insert
 			}
-		}
+		}*/
 	}
 
 	// Binarni hledani, pole je defaultne razeno podle _id.
@@ -341,11 +341,25 @@ angular.module('polda-quiz.services', [])
 	}
 
 	function setProfile(profile) {
-		_localDB.put(profile, function callback(err, result) {
+		/*_localDB.put(profile, function callback(err, result) {
 			if (!err) {
 				console.log('Successfully posted a profile!');
+			} else {
+				console.log(err);
 			}
+		});*/
+
+
+		_localDB.get(profile._id).then(function (doc) {
+		  doc.level = profile.level;
+		  return _localDB.put(doc);
+		}).then(function () {
+		  // fetch mittens again
+		  return _localDB.get(profile._id);
+		}).then(function (doc) {
+		  console.log(doc);
 		});
+
 	}
 
 	return {

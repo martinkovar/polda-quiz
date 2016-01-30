@@ -18,14 +18,14 @@
 
 <div class="pop-cont2 box-padding1  pop-center">
   <p>
-  	{{profile.name}}, Vaše aktuální hodnost je <strong>{{rankLabel[profile.level]}}</strong>.
+  	Vaše aktuální hodnost je <strong>{{ranks[profile.level].name}}</strong>.
   </p>
   <p ng-show="game.continue">
 	  Při poslední hře jste zodpověděl {{game.gameStatistics.answeredQuestions}} otázek z toho {{game.gameStatistics.successQuestions}} správně a	{{game.gameStatistics.failedQuestions}} špatně.
-	  Vaše úspěšnost je tedy {{(100*game.gameStatistics.successQuestions/game.gameStatistics.answeredQuestions)| number:0}}%
+	  Vaše úspěšnost byla tedy {{(100*game.gameStatistics.successQuestions/game.gameStatistics.answeredQuestions)| number:0}}%
   </p>
 <p>
-	Pro postup na hodnost {{rankLabel[profile.level + 1]}} Musíš mít úspěšnost alespoň 60% v příštích 10 otázkách.
+	Pro postup na hodnost {{ranks[profile.level + 1].name}} musíš mít úspěšnost alespoň {{ranks[profile.level].successRate}}% v příštích 10 otázkách. Pokud bude vaše úspěšnost nižší než {{ranks[profile.level].failRate}}%, pak Vaše hodnost spadne na {{ranks[profile.level - 1].name}}
 </p>
 
 </div>
