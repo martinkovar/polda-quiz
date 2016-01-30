@@ -15,7 +15,7 @@
         <div class="row " style="margin-top: 0">
           <div class="questions_stats col1 col-center">
             Otázka:
-            {{game.gameStatistics.answeredQuestions}}
+            {{game.gameStatistics.answeredQuestions + 1}}
           </br>
           Úspěšnost:
           {{(100*game.gameStatistics.successQuestions/game.gameStatistics.answeredQuestions)| number:0}}%

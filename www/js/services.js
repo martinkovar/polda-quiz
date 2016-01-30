@@ -46,7 +46,7 @@ angular.module('polda-quiz.services', [])
 			},
 			setGameQuestions: function() {
 				//nacteni sady otazek pro dane kolo
-				console.log(ProfileService.getLevel());
+				//console.log(ProfileService.getLevel());
 				_game.questions = ContentService.getGameQuestions(ProfileService.getLevel());
 				_game.questions.continue = true;
 			},
@@ -284,9 +284,11 @@ angular.module('polda-quiz.services', [])
 		getGameQuestions: function(level) {
 			var arr = [];
 			for (var i = 0; i < _questions.length; i++) {
-				if (_questions[i].level === parseInt(level)) {
-					arr.push(_questions[i]);
-				}
+				// prozatim zrusena kontrola levelu otazky, vraceno vse
+				//if (_questions[i].level === parseInt(level)) {
+				//	arr.push(_questions[i]);
+				//}
+				arr.push(_questions[i]);
 			}
 			// toto cislo prijde zmenit na 10 az bude dostatecny pocet otazek!!!!!
 			var n = 2;
@@ -318,7 +320,7 @@ angular.module('polda-quiz.services', [])
 				_profile.splice(index, 1); // delete
 			}
 		} else {
-			if (quesprofiletion && profile._id === change.id) {
+			if (quesprofiletion && _profile._id === change.id) {
 				_profile[index] = change.doc; // update
 			} else {
 				_profile.splice(index, 0, change.doc); // insert
