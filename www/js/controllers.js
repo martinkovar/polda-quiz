@@ -26,25 +26,25 @@ angular.module('polda-quiz.controllers', ['timer'])
 		$scope.selectedOption = 0;
 		$scope.clueUsed = false;
 		ProfileService.initDB().then(function(response) {
-			$scope.$watch(function () { return ProfileService.getProfile() }, function (newVal, oldVal) {
-			    if (typeof newVal !== 'undefined') {
+			$scope.$watch(function() {
+				return ProfileService.getProfile()
+			}, function(newVal, oldVal) {
+				if (typeof newVal !== 'undefined') {
 					$scope.profile = ProfileService.getProfile();
-			    }
+				}
 			});
 		});
-		$http.get("./content/ranks.json").success(function (data) {
+		$http.get("./content/ranks.json").success(function(data) {
 			$scope.ranks = data;
 		});
 	});
-
-
 
 	function roundEvaluation() {
 		//zapis zmenene statistiky
 		GameplayService.setGameScore();
 		//udelej zmenu v levelu
 		//console.log(100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions);
-		if((100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions) > $scope.ranks[$scope.profile.level].successRate) {
+		if ((100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions) > $scope.ranks[$scope.profile.level].successRate) {
 			ProfileService.setLevel($scope.profile.level + 1);
 		} else if ((100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions) < $scope.ranks[$scope.profile.level].failRate) {
 			ProfileService.setLevel($scope.profile.level - 1);
@@ -54,13 +54,13 @@ angular.module('polda-quiz.controllers', ['timer'])
 		$state.go('quiz-game.pregame');
 	}
 	$scope.showLoading = function() {
-	    $ionicLoading.show({
-	      template: 'Loading...'
-	    });
-	  };
-	  $scope.hideLoading = function(){
-	    $ionicLoading.hide();
-	  };
+		$ionicLoading.show({
+			template: 'Loading...'
+		});
+	};
+	$scope.hideLoading = function() {
+		$ionicLoading.hide();
+	};
 	$scope.newCareer = function() {
 		var confirmPopup = $ionicPopup.confirm({
 			title: 'Nová hra',
@@ -95,32 +95,35 @@ angular.module('polda-quiz.controllers', ['timer'])
 			$state.go('quiz-game.game');
 		}
 	};
-	$scope.getClue = function() {
-		if(!$scope.clueUsed){
-			$scope.clueUsed = true;
-			$scope.timerRunning = false;
-			var alertPopup = $ionicPopup.alert({
-				title: 'Nápověda 50/50!',
-				template: 'Chcete použít nápovědu?'
-			});
-			alertPopup.then(function(res) {
-				if(res) {
-					//GameplayService.setActiveQuestion();
-					//vymaz 2 nespravne odpovědi ze scope aktualnich options
-					var limit = 0;
-					while (limit < 1) {
-						for (var i = 0; i < $scope.game.activeQuestion.options.length; i++) {
-							if (!$scope.game.activeQuestion.options[i].isAnswer) {
-								$scope.game.activeQuestion.options.splice(i,1);
-								limit++;
+	$scope.getClue = function(type) {
+		if (parseInt(type) === 1) {
+			if (!$scope.clueUsed) {
+				$scope.clueUsed = true;
+				$scope.timerRunning = false;
+				var alertPopup = $ionicPopup.alert({
+					title: 'Nápověda 50/50!',
+					template: 'Chcete použít nápovědu?'
+				});
+				alertPopup.then(function(res) {
+					if (res) {
+						//GameplayService.setActiveQuestion();
+						//vymaz 2 nespravne odpovědi ze scope aktualnich options
+						var limit = 0;
+						while (limit < 1) {
+							for (var i = 0; i < $scope.game.activeQuestion.options.length; i++) {
+								if (!$scope.game.activeQuestion.options[i].isAnswer) {
+									$scope.game.activeQuestion.options.splice(i, 1);
+									limit++;
+								}
 							}
 						}
+					} else {
+						$scope.timerRunning = true;
 					}
-
-				} else {
-					$scope.timerRunning = true;
-				}
-			});
+				});
+			}
+		} else if (parseInt(type) === 2) {
+			//TODO
 		}
 	};
 
@@ -160,10 +163,10 @@ angular.module('polda-quiz.controllers', ['timer'])
 		}
 		alertPopup.then(function(res) {
 			GameplayService.setScoreQuestion(isAnswer);
-			if ($scope.game.gameStatistics.answeredQuestions < 10) {
+			if ($scope.game.gameStatistics.answeredQuestions < $scope.game.questionNumber) {
 				$scope.selectedOption = 0;
 				GameplayService.setActiveQuestion();
-				$scope.$broadcast('timer-set-countdown', 10);
+				$scope.$broadcast('timer-set-countdown', $scope.game.timeLimit);
 				$scope.$broadcast('timer-start');
 			} else {
 				roundEvaluation();
@@ -179,10 +182,10 @@ angular.module('polda-quiz.controllers', ['timer'])
 		alertPopup.then(function(res) {
 			GameplayService.setScoreQuestion(false);
 			GameplayService.setActiveQuestionAnswered(true);
-			if ($scope.game.gameStatistics.answeredQuestions < 10) {
+			if ($scope.game.gameStatistics.answeredQuestions < $scope.game.questionNumber) {
 				$scope.selectedOption = 0;
 				GameplayService.setActiveQuestion();
-				$scope.$broadcast('timer-set-countdown', 10);
+				$scope.$broadcast('timer-set-countdown', $scope.game.timeLimit);
 				$scope.$broadcast('timer-start');
 			} else {
 				roundEvaluation();

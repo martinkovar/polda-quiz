@@ -8,6 +8,8 @@ angular.module('polda-quiz.services', [])
 				generatedQuestions: []
 			},
 			continue: false,
+			timeLimit: 10,
+			questionNumber: 5,
 			questions: {},
 			activeQuestion: {},
 			activeProfile: 0,
@@ -130,7 +132,7 @@ angular.module('polda-quiz.services', [])
 	return {
 		initDB: function() {
 			//vytvoreni lokalni databaze na klientovi
-			_localDB = new PouchDB('quiz_questions_db004', {
+			_localDB = new PouchDB('quiz_questions_db005', {
 				adapter: 'websql'
 			});
 			//vraceni vsech dokumentu lokalni databaze
@@ -205,8 +207,7 @@ angular.module('polda-quiz.services', [])
 				//}
 				arr.push(_questions[i]);
 			}
-			// toto cislo prijde zmenit na 10 az bude dostatecny pocet otazek!!!!!
-			var n = 2;
+			var n = 5; // toto cislo prijde zmenit na 10 az bude dostatecny pocet otazek!!!!!
 			var result = new Array(n),
 				len = arr.length,
 				taken = new Array(len);
@@ -270,7 +271,7 @@ angular.module('polda-quiz.services', [])
 
 	return {
 		initDB: function() {
-			_localDB = new PouchDB('quiz_profile_db004', {
+			_localDB = new PouchDB('quiz_profile_db005', {
 				adapter: 'websql'
 			});
 			if (!_profile) {
@@ -353,7 +354,7 @@ angular.module('polda-quiz.services', [])
 			}
 		},
 		setLevel: function(lvl) {
-			if (parseInt(lvl) >= 0) {
+			if (parseInt(lvl) >= 1) {
 				_profile.level = lvl;
 				setProfile(_profile);
 			}

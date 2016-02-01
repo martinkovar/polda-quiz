@@ -1,86 +1,103 @@
 [{
 	"level": 0,
 	"name": "Rekrut",
+	"addressing": "rekrute",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 1,
 	"name": "Rotný",
+	"addressing": "rotný",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 2,
 	"name": "Strážmistr",
+	"addressing": "strážmistře",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 3,
 	"name": "Nadstrážmistr",
+	"addressing": "nadstrážmistře",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 4,
 	"name": "Podpraporčík",
+	"addressing": "podpraporčíku",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 5,
 	"name": "Praporčík",
+	"addressing": "praporčíku",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 6,
 	"name": "Nadpraporčík",
+	"addressing": "nadpraporčíku",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 7,
 	"name": "Podporučík",
+	"addressing": "podporučíku",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 8,
 	"name": "Poručík",
+	"addressing": "poručíku",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 9,
 	"name": "Nadporučík",
+	"addressing": "nadporučíku",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 10,
 	"name": "Kapitán",
+	"addressing": "kapitáne",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 11,
 	"name": "Major",
+	"addressing": "majore",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 12,
 	"name": "Podplukovník",
+	"addressing": "podplukovníku",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 13,
 	"name": "Plukovník",
+	"addressing": "plukovníku",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 14,
 	"name": "Brigádní generál",
+	"addressing": "brigádní generále",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 15,
 	"name": "Generálmajor",
+	"addressing": "generálmajore",
 	"successRate": 60,
 	"failRate": 40
 }, {
 	"level": 16,
 	"name": "Generálporučík",
+	"addressing": "generálporučíku",
 	"successRate": 60,
 	"failRate": 40
 }]
