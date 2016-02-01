@@ -23,7 +23,6 @@ angular.module('polda-quiz.controllers', ['timer'])
 		ContentService.initDB();
 		$scope.$log = $log;
 		$scope.game = GameplayService.all();
-		$scope.selectedOption = 0;
 		$scope.clueUsed = false;
 		ProfileService.initDB().then(function(response) {
 			$scope.$watch(function() {
@@ -78,10 +77,9 @@ angular.module('polda-quiz.controllers', ['timer'])
 		});
 	};
 	$scope.startGame = function() {
-		$scope.selectedOption = 0;
 		GameplayService.restoreGame();
-		GameplayService.setGameQuestions();
-		var response = GameplayService.setActiveQuestion();
+		var response = GameplayService.setGameQuestions();
+		console.log(response);
 		if (response === null) {
 			var alertPopup = $ionicPopup.alert({
 				title: 'Nejsou otázky!',
@@ -92,13 +90,14 @@ angular.module('polda-quiz.controllers', ['timer'])
 				$log.log('nula - sorry nejsou otázky');
 			});
 		} else {
+			GameplayService.setActiveQuestion($scope.game.activeQuestion);
+			GameplayService.setActiveQuestionAnswered(false);
 			$state.go('quiz-game.game');
 		}
 	};
 	$scope.getClue = function(type) {
 		if (parseInt(type) === 1) {
-			if (!$scope.clueUsed) {
-				$scope.clueUsed = true;
+			if (!$scope.game.clueUsed) {
 				$scope.timerRunning = false;
 				var alertPopup = $ionicPopup.alert({
 					title: 'Nápověda 50/50!',
@@ -106,17 +105,8 @@ angular.module('polda-quiz.controllers', ['timer'])
 				});
 				alertPopup.then(function(res) {
 					if (res) {
-						//GameplayService.setActiveQuestion();
-						//vymaz 2 nespravne odpovědi ze scope aktualnich options
-						var limit = 0;
-						while (limit < 1) {
-							for (var i = 0; i < $scope.game.activeQuestion.options.length; i++) {
-								if (!$scope.game.activeQuestion.options[i].isAnswer) {
-									$scope.game.activeQuestion.options.splice(i, 1);
-									limit++;
-								}
-							}
-						}
+						GameplayService.getClue();
+						$scope.$broadcast('timer-clear');
 					} else {
 						$scope.timerRunning = true;
 					}
@@ -146,10 +136,8 @@ angular.module('polda-quiz.controllers', ['timer'])
 	$scope.answer = function(index, isAnswer) {
 		$scope.$broadcast('timer-clear');
 		$scope.timerRunning = false;
-		$scope.selectedOption = index + 1;
+		GameplayService.setSelectedOption(index + 1);
 		GameplayService.setActiveQuestionAnswered(true);
-
-
 		if (isAnswer) {
 			var alertPopup = $ionicPopup.alert({
 				title: 'Správně!',
@@ -163,9 +151,10 @@ angular.module('polda-quiz.controllers', ['timer'])
 		}
 		alertPopup.then(function(res) {
 			GameplayService.setScoreQuestion(isAnswer);
-			if ($scope.game.gameStatistics.answeredQuestions < $scope.game.questionNumber) {
-				$scope.selectedOption = 0;
-				GameplayService.setActiveQuestion();
+			if ($scope.game.activeQuestion < $scope.game.questionNumber - 1) {
+				GameplayService.setActiveQuestionAnswered(false);
+				GameplayService.setNextActiveQuestion();
+				GameplayService.setSelectedOption(0);
 				$scope.$broadcast('timer-set-countdown', $scope.game.timeLimit);
 				$scope.$broadcast('timer-start');
 			} else {
@@ -175,16 +164,19 @@ angular.module('polda-quiz.controllers', ['timer'])
 	};
 
 	$scope.timeLimit = function() {
+		$scope.$broadcast('timer-clear');
+		$scope.timerRunning = false;
+		GameplayService.setActiveQuestionAnswered(true);
 		var alertPopup = $ionicPopup.alert({
 			title: 'Nezodpovězeno!',
 			template: 'Sorry, musíš se vymáčknout...'
 		});
 		alertPopup.then(function(res) {
 			GameplayService.setScoreQuestion(false);
-			GameplayService.setActiveQuestionAnswered(true);
-			if ($scope.game.gameStatistics.answeredQuestions < $scope.game.questionNumber) {
-				$scope.selectedOption = 0;
-				GameplayService.setActiveQuestion();
+			if ($scope.game.activeQuestion < $scope.game.questionNumber - 1) {
+				GameplayService.setActiveQuestionAnswered(false);
+				GameplayService.setNextActiveQuestion();
+				GameplayService.setSelectedOption(0);
 				$scope.$broadcast('timer-set-countdown', $scope.game.timeLimit);
 				$scope.$broadcast('timer-start');
 			} else {

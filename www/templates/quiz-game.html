@@ -9,7 +9,7 @@
       <div class="cont2">
         <div class="questions_task">
           <div class="row row-center" style="border: 1px solid black; border-radius: 30px;height: 100%;">
-            {{ game.activeQuestion.question }}
+            {{ game.questions[game.activeQuestion].question }}
           </div>
         </div>
         <div class="row " style="margin-top: 0">
@@ -38,7 +38,7 @@
 
 <div class="cont3">
 <div class="responsive-sm options">
-  <button class="col button option item_cont_large" ng-class="{'button-balanced':option.isAnswer && game.isActiveQuestionsAnswered,  'button-assertive':!option.isAnswer && ($index + 1 == selectedOption) && game.isActiveQuestionsAnswered}" ng-click="answer($index, option.isAnswer)" ng-disabled="game.isActiveQuestionsAnswered" ng-repeat="option in game.activeQuestion.options">
+  <button class="col button option item_cont_large" ng-class="{'button-balanced':option.isAnswer && game.isActiveQuestionsAnswered,  'button-assertive':!option.isAnswer && ($index + 1 == selectedOption) && game.isActiveQuestionsAnswered}" ng-click="answer($index, option.isAnswer)" ng-disabled="game.isActiveQuestionsAnswered" ng-repeat="option in game.questions[game.activeQuestion].options">
     <span>{{ option.text }}</span>
   </button>
 </div>

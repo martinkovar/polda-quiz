@@ -11,8 +11,10 @@ angular.module('polda-quiz.services', [])
 			timeLimit: 10,
 			questionNumber: 5,
 			questions: {},
-			activeQuestion: {},
+			clueUsed: false,
+			activeQuestion: 0,
 			activeProfile: 0,
+			selectedOption: 0,
 			isActiveQuestionsAnswered: false,
 			gameStatistics: {
 				successQuestions: 0,
@@ -46,13 +48,12 @@ angular.module('polda-quiz.services', [])
 				ProfileService.updateLevel(level);
 			},
 			setGameQuestions: function() {
-				//nacteni sady otazek pro dane kolo
-				//console.log(ProfileService.getLevel());
-				_game.questions = ContentService.getGameQuestions(ProfileService.getLevel());
 				_game.continue = true;
+				_game.questions = ContentService.getGameQuestions(ProfileService.getLevel());
+				return _game.questions;
 			},
-			setActiveQuestion: function() {
-				_game.activeQuestion = {};
+			setActiveQuestion: function(index) {
+				/*_game.activeQuestion = _game.activeQuestion + 1;
 				_game.isActiveQuestionsAnswered = false;
 
 				//console.log(_game.questions);
@@ -69,10 +70,17 @@ angular.module('polda-quiz.services', [])
 					return null;
 				} else {
 					return _game.activeQuestion;
-				}
+				}*/
+				return _game.questions[index];
 			},
 			setActiveQuestionAnswered: function(state) {
 				_game.isActiveQuestionsAnswered = state;
+			},
+			setNextActiveQuestion: function(state) {
+				_game.activeQuestion++;
+			},
+			setSelectedOption: function(selection) {
+				_game.selectedOption = selection;
 			},
 			setScoreQuestion: function(result) {
 				_game.gameStatistics.answeredQuestions++;
@@ -85,12 +93,26 @@ angular.module('polda-quiz.services', [])
 			setGameScore: function() {
 				ProfileService.setStatistics(_game.gameStatistics.successQuestions, _game.gameStatistics.failedQuestions);
 			},
+			getClue: function() {
+				var limit = 0;
+				while (limit < 1) {
+					for (var i = 0; i < _game.questions[_game.activeQuestion].options.length; i++) {
+						if (!_game.questions[_game.activeQuestion].options[i].isAnswer) {
+							_game.questions[_game.activeQuestion].options.splice(i, 1);
+							limit++;
+						}
+					}
+				}
+				_game.clueUsed = true;
+			},
 			restoreGame: function() {
 				_game.gameSetup.generatedQuestions = [];
 				_game.gameStatistics.failedQuestions = 0;
 				_game.gameStatistics.successQuestions = 0;
 				_game.gameStatistics.answeredQuestions = 0;
-				_game.activeQuestion = '';
+				_game.activeQuestion = 0;
+				_game.selectedOption = 0;
+				_game.clueUsed = false;
 			}
 		};
 	}])
@@ -115,6 +137,20 @@ angular.module('polda-quiz.services', [])
 				_questions.splice(index, 0, change.doc); // insert
 			}
 		}
+	}
+
+	//pomocna funkce pro nahodne prehazeni prvku v poli
+	function shuffle(array) {
+		var currentIndex = array.length,
+			temporaryValue, randomIndex;
+		while (0 !== currentIndex) {
+			randomIndex = Math.floor(Math.random() * currentIndex);
+			currentIndex -= 1;
+			temporaryValue = array[currentIndex];
+			array[currentIndex] = array[randomIndex];
+			array[randomIndex] = temporaryValue;
+		}
+		return array;
 	}
 
 	// Binarni hledani, pole je defaultne razeno podle _id.
@@ -205,19 +241,29 @@ angular.module('polda-quiz.services', [])
 				//if (_questions[i].level === parseInt(level)) {
 				//	arr.push(_questions[i]);
 				//}
+				shuffle(_questions[i].options);
 				arr.push(_questions[i]);
 			}
+
 			var n = 5; // toto cislo prijde zmenit na 10 az bude dostatecny pocet otazek!!!!!
+			if (n < arr.length) {
+				var result = shuffle(arr).slice(0,n);
+			} else {
+				throw new RangeError("málo otázek");
+			}
+/*
 			var result = new Array(n),
 				len = arr.length,
 				taken = new Array(len);
-			if (n > len)
-				throw new RangeError("getRandom: more elements taken than available");
+			if (n > len) {
+				throw new RangeError("málo otázek");
+			}
 			while (n--) {
 				var x = Math.floor(Math.random() * len);
 				result[n] = arr[x in taken ? taken[x] : x];
 				taken[x] = --len;
 			}
+*/
 			return result;
 		}
 	};
