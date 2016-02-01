@@ -49,28 +49,11 @@ angular.module('polda-quiz.services', [])
 			},
 			setGameQuestions: function() {
 				_game.continue = true;
+				//console.log(ContentService.getGameQuestions(ProfileService.getLevel()));
 				_game.questions = ContentService.getGameQuestions(ProfileService.getLevel());
 				return _game.questions;
 			},
 			setActiveQuestion: function(index) {
-				/*_game.activeQuestion = _game.activeQuestion + 1;
-				_game.isActiveQuestionsAnswered = false;
-
-				//console.log(_game.questions);
-				if (_game.questions.length > 0) {
-					var randomId = parseInt(Math.floor(Math.random() * _game.questions.length));
-					//console.log('nahodne id: ' + randomId + ' a delka pole: ' + _game.questions.length);
-					var randomQuestion = _game.questions[randomId];
-					//TODO odebrat otazku z pole otazek
-					shuffle(randomQuestion.options);
-					_game.activeQuestion = randomQuestion;
-				}
-
-				if (_game.activeQuestion === undefined || _game.activeQuestion === null) {
-					return null;
-				} else {
-					return _game.activeQuestion;
-				}*/
 				return _game.questions[index];
 			},
 			setActiveQuestionAnswered: function(state) {
@@ -168,7 +151,7 @@ angular.module('polda-quiz.services', [])
 	return {
 		initDB: function() {
 			//vytvoreni lokalni databaze na klientovi
-			_localDB = new PouchDB('quiz_questions_db005', {
+			_localDB = new PouchDB('quiz_questions_db006', {
 				adapter: 'websql'
 			});
 			//vraceni vsech dokumentu lokalni databaze
@@ -251,19 +234,7 @@ angular.module('polda-quiz.services', [])
 			} else {
 				throw new RangeError("málo otázek");
 			}
-/*
-			var result = new Array(n),
-				len = arr.length,
-				taken = new Array(len);
-			if (n > len) {
-				throw new RangeError("málo otázek");
-			}
-			while (n--) {
-				var x = Math.floor(Math.random() * len);
-				result[n] = arr[x in taken ? taken[x] : x];
-				taken[x] = --len;
-			}
-*/
+
 			return result;
 		}
 	};
@@ -317,7 +288,7 @@ angular.module('polda-quiz.services', [])
 
 	return {
 		initDB: function() {
-			_localDB = new PouchDB('quiz_profile_db005', {
+			_localDB = new PouchDB('quiz_profile_db006', {
 				adapter: 'websql'
 			});
 			if (!_profile) {

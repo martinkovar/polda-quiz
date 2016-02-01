@@ -78,9 +78,10 @@ angular.module('polda-quiz.controllers', ['timer'])
 	};
 	$scope.startGame = function() {
 		GameplayService.restoreGame();
-		var response = GameplayService.setGameQuestions();
-		console.log(response);
-		if (response === null) {
+		//spatny propis dat do scope!
+		$scope.game.questions = GameplayService.setGameQuestions();
+
+		if ($scope.game.questions === null) {
 			var alertPopup = $ionicPopup.alert({
 				title: 'Nejsou otázky!',
 				subTitle: 'Průser nebo lenost?',
