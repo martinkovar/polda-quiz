@@ -1,0 +1,43 @@
+[{
+	"id": 0,
+	"question": "Jaké je hlavní město ČR?",
+	"options": [{
+		"text": "Praha",
+		"isAnswer": true
+	}, {
+		"text": "Brno"
+	}, {
+		"text": "Ostrava"
+	}, {
+		"text": "Bratislava"
+	}],
+	"level": 0
+}, {
+	"id": 1,
+	"question": "Kdo je prezident ČR?",
+	"options": [{
+		"text": "Miloš Zeman",
+		"isAnswer": true
+	}, {
+		"text": "Václav Klaus"
+	}, {
+		"text": "Václav Havel"
+	}, {
+		"text": "Milouš Jakeš"
+	}],
+	"level": 0
+}, {
+	"id": 2,
+	"question": "Kdo je premiér ČR?",
+	"options": [{
+		"text": "Petr Pithart"
+	}, {
+		"text": "Jiří Paroubek"
+	}, {
+		"text": "Mirek Topolánek"
+	}, {
+		"text": "Dluhoslav Socbotka",
+		"isAnswer": true
+	}],
+	"level": 0
+}]

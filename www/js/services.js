@@ -94,96 +94,10 @@ angular.module('polda-quiz.services', [])
 		};
 	}])
 
-.factory('ContentService', ['$q', '$ionicPopup', '$log', function($q, $ionicPopup, $log) {
+.factory('ContentService', ['$q', '$ionicPopup', '$log', '$http', function($q, $ionicPopup, $log, $http) {
 
 	var _localDB;
 	var _questions; //lokalni cache pro otazky
-
-	var defaultQuestions = [{
-		id: 0,
-		question: 'Který živočich Dagmar Havlová při 19°C žloutne?',
-		options: [{
-			text: 'Tučňák',
-			isAnswer: true
-		}, {
-			text: 'Samice hrabáče'
-		}, {
-			text: 'Zaoceánský parník'
-		}, {
-			text: 'Mononukleóza'
-		}],
-		level: 0
-	}, {
-		id: 1,
-		question: 'Proč je voda mokrá?',
-		options: [{
-			text: 'Tučňák'
-		}, {
-			text: 'Samice hrabáče',
-			isAnswer: true
-		}, {
-			text: 'Zaoceánský parník'
-		}, {
-			text: 'Mononukleóza'
-		}],
-		level: 0
-	}, {
-		id: 2,
-		question: 'Kdo je Albert Einstein?',
-		options: [{
-			text: 'Tučňák'
-		}, {
-			text: 'Samice hrabáče'
-		}, {
-			text: 'Zaoceánský parník'
-		}, {
-			text: 'Mononukleóza',
-			isAnswer: true
-		}],
-		level: 0
-	}, {
-		id: 2,
-		question: 'Kdo je Albert Einstein?',
-		options: [{
-			text: 'Tučňák'
-		}, {
-			text: 'Samice hrabáče'
-		}, {
-			text: 'Zaoceánský parník'
-		}, {
-			text: 'Mononukleóza',
-			isAnswer: true
-		}],
-		level: 5
-	}, {
-		id: 2,
-		question: 'Kdo je Albert Einstein?',
-		options: [{
-			text: 'Tučňák'
-		}, {
-			text: 'Samice hrabáče'
-		}, {
-			text: 'Zaoceánský parník'
-		}, {
-			text: 'Mononukleóza',
-			isAnswer: true
-		}],
-		level: 5
-	}, {
-		id: 2,
-		question: 'Kdo je Albert Einstein?',
-		options: [{
-			text: 'Tučňák'
-		}, {
-			text: 'Samice hrabáče'
-		}, {
-			text: 'Zaoceánský parník'
-		}, {
-			text: 'Mononukleóza',
-			isAnswer: true
-		}],
-		level: 5
-	}];
 
 	function onDatabaseChange(change) {
 		var index = findIndex(_questions, change.id);
@@ -217,7 +131,7 @@ angular.module('polda-quiz.services', [])
 	return {
 		initDB: function() {
 			//vytvoreni lokalni databaze na klientovi
-			_localDB = new PouchDB('quiz_questions_db3', {
+			_localDB = new PouchDB('quiz_questions_db004', {
 				adapter: 'websql'
 			});
 			//vraceni vsech dokumentu lokalni databaze
@@ -234,8 +148,10 @@ angular.module('polda-quiz.services', [])
 					//v priprade prazdne lokalni db
 					if (_questions.length === 0) {
 						//naplneni lokalni db default hodnotami (ktere jsou napevno v kodu)
-						$q.when(_localDB.bulkDocs(defaultQuestions));
-						_questions = defaultQuestions;
+						$http.get("./content/questions.json").success(function (data) {
+							$q.when(_localDB.bulkDocs(data));
+							_questions = data;
+						  });
 					}
 
 					var _remoteDB = new PouchDB("http://localhost:5984/quiz_database");
@@ -312,7 +228,7 @@ angular.module('polda-quiz.services', [])
 	var _profile;
 
 	function onDatabaseChange(change) {
-console.log(change);
+		//console.log(change);
 		var index = findIndex(_profile, change.id);
 		var profile = _profile[index];
 		if (change.deleted) {
@@ -343,25 +259,14 @@ console.log(change);
 	}
 
 	function setProfile(profile) {
-		/*_localDB.put(profile, function callback(err, result) {
-			if (!err) {
-				console.log('Successfully posted a profile!');
-			} else {
-				console.log(err);
-			}
-		});*/
-
-
-		_localDB.get(profile._id).then(function (doc) {
-		  doc.level = profile.level;
-		  return _localDB.put(doc);
-		}).then(function () {
-		  // fetch mittens again
-		  return _localDB.get(profile._id);
-		}).then(function (doc) {
-		  console.log(doc);
+		_localDB.get(profile._id).then(function(doc) {
+			doc.level = profile.level;
+			return _localDB.put(doc);
+		}).then(function() {
+			return _localDB.get(profile._id);
+		}).then(function(doc) {
+			//console.log(doc);
 		});
-
 	}
 
 	return {
@@ -378,7 +283,6 @@ console.log(change);
 						_profile = docs.rows.map(function(row) {
 							return row.doc;
 						});
-						//console.log(_profile);
 						if (_profile.length === 0) {
 							var defaultProfile = {
 								_id: "1",
@@ -392,9 +296,9 @@ console.log(change);
 							};
 							_localDB.bulkDocs([defaultProfile]).then(function(docs) {
 								_profile = defaultProfile;
-								console.log("defaultni naplneni profilem v pripade prazdne lokalni db");
+								//console.log("defaultni naplneni profilem v pripade prazdne lokalni db");
 							}).catch(function(err) {
-								console.log("defaultni naplneni se nepovedlo");
+								//console.log("defaultni naplneni se nepovedlo");
 								console.log(err);
 							});
 						} else {
