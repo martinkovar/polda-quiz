@@ -1,0 +1,8 @@
+[{
+	"_id": 0,
+	"description": "hláška po dohrání hry",
+	"event": "0",
+	"negative_message": "Tohle se nepovedlo",
+	"positive_message": "Tvoje máma by na Tebe byla hrdá!",
+	"neutral_message": "Bezproblémový průběh akce"
+}]
