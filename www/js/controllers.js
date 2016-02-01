@@ -17,7 +17,7 @@ angular.module('polda-quiz.controllers', ['timer'])
 
 }])
 
-.controller('GameplayCtrl', ['$scope', '$location', '$ionicNavBarDelegate', '$log', '$ionicPlatform', 'ContentService', 'GameplayService', 'ProfileService', '$ionicModal', '$ionicHistory', '$ionicPopup', '$state', '$ionicLoading', function($scope, $location, $ionicNavBarDelegate, $log, $ionicPlatform, ContentService, GameplayService, ProfileService, $ionicModal, $ionicHistory, $ionicPopup, $state, $ionicLoading) {
+.controller('GameplayCtrl', ['$scope', '$location', '$ionicNavBarDelegate', '$http', '$log', '$ionicPlatform', 'ContentService', 'GameplayService', 'ProfileService', '$ionicModal', '$ionicHistory', '$ionicPopup', '$state', '$ionicLoading', function($scope, $location, $ionicNavBarDelegate, $http, $log, $ionicPlatform, ContentService, GameplayService, ProfileService, $ionicModal, $ionicHistory, $ionicPopup, $state, $ionicLoading) {
 
 	$ionicPlatform.ready(function() {
 		ContentService.initDB();
@@ -26,35 +26,15 @@ angular.module('polda-quiz.controllers', ['timer'])
 		$scope.selectedOption = 0;
 		$scope.clueUsed = false;
 		ProfileService.initDB().then(function(response) {
-			//$scope.profile = response;
 			$scope.$watch(function () { return ProfileService.getProfile() }, function (newVal, oldVal) {
 			    if (typeof newVal !== 'undefined') {
 					$scope.profile = ProfileService.getProfile();
 			    }
 			});
-
-
-
 		});
-		$scope.ranks = [
-{'level': 0,'name': 'Rekrut', 'successRate': 60, 'failRate': 40},
-{'level': 1,'name': 'Rotný', 'successRate': 60, 'failRate': 40},
-{'level': 2,'name': 'Strážmistr', 'successRate': 60, 'failRate': 40},
-{'level': 3,'name': 'Nadstrážmistr', 'successRate': 60, 'failRate': 40},
-{'level': 4,'name': 'Podpraporčík', 'successRate': 60, 'failRate': 40},
-{'level': 5,'name': 'Praporčík', 'successRate': 60, 'failRate': 40},
-{'level': 6,'name': 'Nadpraporčík', 'successRate': 60, 'failRate': 40},
-{'level': 7,'name': 'Podporučík', 'successRate': 60, 'failRate': 40},
-{'level': 8,'name': 'Poručík', 'successRate': 60, 'failRate': 40},
-{'level': 9,'name': 'Nadporučík', 'successRate': 60, 'failRate': 40},
-{'level': 10,'name': 'Kapitán', 'successRate': 60, 'failRate': 40},
-{'level': 11,'name': 'Major', 'successRate': 60, 'failRate': 40},
-{'level': 12,'name': 'Podplukovník', 'successRate': 60, 'failRate': 40},
-{'level': 13,'name': 'Plukovník', 'successRate': 60, 'failRate': 40},
-{'level': 14,'name': 'Brigádní generál', 'successRate': 60, 'failRate': 40},
-{'level': 15,'name': 'Generálmajor', 'successRate': 60, 'failRate': 40},
-{'level': 16,'name': 'Generálporučík', 'successRate': 60, 'failRate': 40}
-];
+		$http.get("./content/ranks.json").success(function (data) {
+			$scope.ranks = data;
+		});
 	});
 
 

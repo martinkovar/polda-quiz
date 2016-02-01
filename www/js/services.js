@@ -42,7 +42,6 @@ angular.module('polda-quiz.services', [])
 			},
 			setLevel: function(level) {
 				ProfileService.updateLevel(level);
-				//ProfileService.getLevel() = level;
 			},
 			setGameQuestions: function() {
 				//nacteni sady otazek pro dane kolo
@@ -271,7 +270,7 @@ angular.module('polda-quiz.services', [])
 
 	return {
 		initDB: function() {
-			_localDB = new PouchDB('quiz_profile_db3', {
+			_localDB = new PouchDB('quiz_profile_db004', {
 				adapter: 'websql'
 			});
 			if (!_profile) {
@@ -287,7 +286,7 @@ angular.module('polda-quiz.services', [])
 							var defaultProfile = {
 								_id: "1",
 								name: 'Nick',
-								level: 5,
+								level: 0,
 								statistics: {
 									successQuestions: 0,
 									failedQuestions: 0,
@@ -314,7 +313,7 @@ angular.module('polda-quiz.services', [])
 						return _profile;
 					});
 			} else {
-				console.log("vraceni chache profilu");
+				//console.log("vraceni chache profilu");
 				return $q.when(_profile);
 			}
 		},
@@ -330,7 +329,7 @@ angular.module('polda-quiz.services', [])
 			_profile = {
 				_id: "1",
 				name: 'Odpadlík',
-				level: 1,
+				level: 0,
 				statistics: {
 					successQuestions: 0,
 					failedQuestions: 0,
@@ -347,10 +346,9 @@ angular.module('polda-quiz.services', [])
 				}).then(function(doc) {
 					_profile = doc.rows;
 				}).catch(function(err) {
-					// oh noes! we got an error
+					// chyba
 				});
 			} else {
-				//doplnit vraceni cache dat
 				return _profile;
 			}
 		},
