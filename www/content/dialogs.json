@@ -1,8 +1,16 @@
 [{
 	"_id": 0,
-	"description": "hláška po dohrání hry",
-	"event": "0",
-	"negative_message": "Tohle se nepovedlo",
-	"positive_message": "Tvoje máma by na Tebe byla hrdá!",
-	"neutral_message": "Bezproblémový průběh akce"
+	"description": "hláška po úspěšném dohrání hry",
+	"event": 0,
+	"level": 0,
+	"message": "Tohle se povedlo",
+	"image": ""
+},
+{
+	"_id": 1,
+	"description": "hláška po neúspěšném dohrání hry",
+	"event": 1,
+	"level": 0,
+	"message": "Tohle se nepovedlo",
+	"image": ""
 }]
