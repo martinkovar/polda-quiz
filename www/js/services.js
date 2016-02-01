@@ -49,9 +49,9 @@ angular.module('polda-quiz.services', [])
 			},
 			setGameQuestions: function() {
 				_game.continue = true;
-				//console.log(ContentService.getGameQuestions(ProfileService.getLevel()));
-				_game.questions = ContentService.getGameQuestions(ProfileService.getLevel());
-				return _game.questions;
+				return ContentService.getGameQuestions(ProfileService.getLevel()).then(function(data){
+					_game.questions = angular.copy(data);
+				});
 			},
 			setActiveQuestion: function(index) {
 				return _game.questions[index];
@@ -96,12 +96,12 @@ angular.module('polda-quiz.services', [])
 				_game.activeQuestion = 0;
 				_game.selectedOption = 0;
 				_game.clueUsed = false;
+				_game.questions = {};
 			}
 		};
 	}])
 
 .factory('ContentService', ['$q', '$ionicPopup', '$log', '$http', function($q, $ionicPopup, $log, $http) {
-
 	var _localDB;
 	var _questions; //lokalni cache pro otazky
 
@@ -150,68 +150,79 @@ angular.module('polda-quiz.services', [])
 
 	return {
 		initDB: function() {
-			//vytvoreni lokalni databaze na klientovi
-			_localDB = new PouchDB('quiz_questions_db006', {
+			_localDB = new PouchDB('quiz_questions_db009', {
 				adapter: 'websql'
 			});
-			//vraceni vsech dokumentu lokalni databaze
-			$q.when(_localDB.allDocs({
-					include_docs: true
-				}))
-				.then(function(docs) {
-					//naplneni cache (promenne _questions) otazkami z lokalni db
-					_questions = docs.rows.map(function(row) {
-						return row.doc;
-					});
-				})
-				.then(function() {
-					//v priprade prazdne lokalni db
-					if (_questions.length === 0) {
-						//naplneni lokalni db default hodnotami (ktere jsou napevno v kodu)
-						$http.get("./content/questions.json").success(function (data) {
-							$q.when(_localDB.bulkDocs(data));
-							_questions = data;
-						  });
-					}
-
-					var _remoteDB = new PouchDB("http://localhost:5984/quiz_database");
-					_localDB.sync(_remoteDB, {
-							// v produkci live a retry vypnout? asi jo
-							//live: true,
-							//retry: true
-						})
-						.on('change', function(info) {
-							// handle change
-							$q.when(_localDB.allDocs({
-									include_docs: true
-								}))
-								.then(function(docs) {
-									//naplneni cache (promenne _questions) otazkami z lokalni db
-									_questions = docs.rows.map(function(row) {
-										return row.doc;
-									});
-								});
-						}).on('paused', function() {
-							// replication paused (e.g. user went offline)
-						}).on('active', function() {
-							// replicate resumed (e.g. user went back online)
-						}).on('denied', function(info) {
-							// a document failed to replicate, e.g. due to permissions
-						}).on('complete', function(info) {
-							// handle complete
-							console.log('db synchronizace');
-						}).on('error', function(err) {
-							// prozatim nahradit pop-up konzolovym vypisem
-							$log.log('chyba při synchronizaci');
-							/*var alertPopup = $ionicPopup.alert({
-								title: 'Chyba synchronizace!',
-								template: 'Nelze přistoupit k serverovým datům'
-							});
-							alertPopup.then(function(res) {
-								$log.log('chyba při synchronizaci');
-							});*/
+			if (!_questions) {
+				return $q.when(_localDB.allDocs({
+						include_docs: true
+					}))
+					.then(function(docs) {
+						//console.log("naplneni cache profilem z lokalni db");
+						_questions = docs.rows.map(function(row) {
+							return row.doc;
 						});
-				});
+						if (_questions.length === 0) {
+							$http.get("./content/questions.json").success(function(data) {
+								_localDB.bulkDocs(data).then(function(docs) {
+									_questions = data;
+									//console.log("defaultni naplneni profilem v pripade prazdne lokalni db");
+								}).catch(function(err) {
+									//console.log("defaultni naplneni se nepovedlo");
+									console.log(err);
+								});
+							});
+						}
+
+						_localDB.changes({
+							live: true,
+							since: 'now',
+							include_docs: true
+						}).on('change', onDatabaseChange);
+
+						return _questions;
+					});
+			} else {
+				//console.log("vraceni chache profilu");
+				return $q.when(_questions);
+			}
+
+			//DOCASNE VYPNUTA SYNCHRONIZACE CONTENTU
+			/*var _remoteDB = new PouchDB("http://localhost:5984/quiz_database");
+			_localDB.sync(_remoteDB, {
+					// v produkci live a retry vypnout? asi jo
+					//live: true,
+					//retry: true
+				})
+				.on('change', function(info) {
+					// handle change
+					$q.when(_localDB.allDocs({
+							include_docs: true
+						}))
+						.then(function(docs) {
+							//naplneni cache (promenne _questions) otazkami z lokalni db
+							_questions = docs.rows.map(function(row) {
+								return row.doc;
+							});
+						});
+				}).on('paused', function() {
+					// replication paused (e.g. user went offline)
+				}).on('active', function() {
+					// replicate resumed (e.g. user went back online)
+				}).on('denied', function(info) {
+					// a document failed to replicate, e.g. due to permissions
+				}).on('complete', function(info) {
+					// handle complete
+					console.log('db synchronizace');
+				}).on('error', function(err) {
+					var alertPopup = $ionicPopup.alert({
+						title: 'Chyba synchronizace!',
+						template: 'Nelze přistoupit k serverovým datům'
+					});
+					alertPopup.then(function(res) {
+						$log.log('chyba při synchronizaci');
+					});
+				});*/
 		},
 		getQuestions: function() {
 			// Vrátit nacachovaná (lokálně uložená) data
@@ -230,12 +241,14 @@ angular.module('polda-quiz.services', [])
 
 			var n = 5; // toto cislo prijde zmenit na 10 az bude dostatecny pocet otazek!!!!!
 			if (n < arr.length) {
-				var result = shuffle(arr).slice(0,n);
+				var result = []
+				result = arr;
+				result = shuffle(arr);
+				result = result.slice(0, n);
 			} else {
 				throw new RangeError("málo otázek");
 			}
-
-			return result;
+			return $q.when(result);
 		}
 	};
 }])
@@ -288,7 +301,7 @@ angular.module('polda-quiz.services', [])
 
 	return {
 		initDB: function() {
-			_localDB = new PouchDB('quiz_profile_db006', {
+			_localDB = new PouchDB('quiz_profile_db009', {
 				adapter: 'websql'
 			});
 			if (!_profile) {
@@ -296,7 +309,7 @@ angular.module('polda-quiz.services', [])
 						include_docs: true
 					}))
 					.then(function(docs) {
-						console.log("naplneni cache profilem z lokalni db");
+						//console.log("naplneni cache profilem z lokalni db");
 						_profile = docs.rows.map(function(row) {
 							return row.doc;
 						});

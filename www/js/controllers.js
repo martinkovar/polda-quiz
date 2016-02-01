@@ -23,7 +23,6 @@ angular.module('polda-quiz.controllers', ['timer'])
 		ContentService.initDB();
 		$scope.$log = $log;
 		$scope.game = GameplayService.all();
-		$scope.clueUsed = false;
 		ProfileService.initDB().then(function(response) {
 			$scope.$watch(function() {
 				return ProfileService.getProfile()
@@ -42,7 +41,6 @@ angular.module('polda-quiz.controllers', ['timer'])
 		//zapis zmenene statistiky
 		GameplayService.setGameScore();
 		//udelej zmenu v levelu
-		//console.log(100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions);
 		if ((100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions) > $scope.ranks[$scope.profile.level].successRate) {
 			ProfileService.setLevel($scope.profile.level + 1);
 		} else if ((100 * $scope.game.gameStatistics.successQuestions / $scope.game.gameStatistics.answeredQuestions) < $scope.ranks[$scope.profile.level].failRate) {
@@ -78,9 +76,7 @@ angular.module('polda-quiz.controllers', ['timer'])
 	};
 	$scope.startGame = function() {
 		GameplayService.restoreGame();
-		//spatny propis dat do scope!
-		$scope.game.questions = GameplayService.setGameQuestions();
-
+		GameplayService.setGameQuestions();
 		if ($scope.game.questions === null) {
 			var alertPopup = $ionicPopup.alert({
 				title: 'Nejsou otázky!',
